@@ -104,8 +104,9 @@
                         <div><strong class="text-slate-800">Dari:</strong> {{ $order->pickup_address }}</div>
                         <div><strong class="text-slate-800">Ke:</strong> {{ $order->dropoff_address }}</div>
                     </div>
-                    <button onclick="claimOrder({{ $order->id }})" class="w-full py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition shadow-sm">
-                        Ambil Pesanan Ini (Pessimistic Lock)
+                    <button onclick="claimOrder({{ $order->id }})" class="w-full py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <i data-lucide="package-plus" class="w-3.5 h-3.5"></i>
+                        <span>Ambil Pesanan Ini</span>
                     </button>
                 </div>
             @empty

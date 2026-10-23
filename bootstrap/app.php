@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant' => TenantResolverMiddleware::class,
             'admin.protect' => AdminRouteProtectionMiddleware::class,
+            'role.driver' => \App\Http\Middleware\DriverRoleMiddleware::class,
+            'role.dispatcher' => \App\Http\Middleware\DispatcherRoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

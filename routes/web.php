@@ -35,16 +35,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // 3. Public Customer Live Tracking
 Route::get('/track/{token}', [PublicTrackingController::class, 'show'])->name('tracking.show');
 
-// 4. Dispatcher Operations Center
-Route::prefix('dispatch')->group(function () {
+// 4. Dispatcher Operations Center (Khusus Tim Kantor / Dispatcher)
+Route::prefix('dispatch')->middleware(['auth', 'role.dispatcher'])->group(function () {
     Route::get('/', [DispatcherController::class, 'index'])->name('dispatcher.index');
     Route::post('/orders', [DispatcherController::class, 'storeOrder'])->name('dispatcher.orders.store');
     Route::post('/orders/{orderId}/broadcast', [DispatcherController::class, 'dispatchOrder'])->name('dispatcher.orders.dispatch');
     Route::get('/api/drivers', [DispatcherController::class, 'apiFleetGeo'])->name('dispatcher.api.drivers');
 });
 
-// 5. Driver Mobile PWA Cockpit
-Route::get('/driver', [DriverMobileController::class, 'index'])->name('driver.index');
+// 5. Driver Mobile PWA Cockpit (Khusus Kurir / Driver Lapangan)
+Route::get('/driver', [DriverMobileController::class, 'index'])->middleware(['auth', 'role.driver'])->name('driver.index');
 
 // 6. Obfuscated Administrative Operations Suite
 $adminPrefix = config('app.admin_prefix', 'fleetpulse-ops-mgmt');

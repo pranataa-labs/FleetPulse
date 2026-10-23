@@ -130,9 +130,15 @@ class FrontendUiAndWorkflowTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function test_unauthenticated_user_cannot_access_internal_portals(): void
+    {
+        $this->get(route('dispatcher.index'))->assertRedirect(route('login'));
+        $this->get(route('driver.index'))->assertRedirect(route('login'));
+    }
+
     public function test_dispatcher_center_loads_and_displays_kpis_and_radar(): void
     {
-        $response = $this->get(route('dispatcher.index'));
+        $response = $this->actingAs($this->adminUser)->get(route('dispatcher.index'));
 
         $response->assertStatus(200)
             ->assertSee('Dispatcher Operations Center')
@@ -143,7 +149,7 @@ class FrontendUiAndWorkflowTest extends TestCase
 
     public function test_dispatcher_can_create_new_order_with_automated_haversine_and_pricing(): void
     {
-        $response = $this->post(route('dispatcher.orders.store'), [
+        $response = $this->actingAs($this->adminUser)->post(route('dispatcher.orders.store'), [
             'sender_name' => 'PT Sumber Rezeki',
             'sender_phone' => '081299998888',
             'pickup_address' => 'SCBD Jakarta',
@@ -170,7 +176,7 @@ class FrontendUiAndWorkflowTest extends TestCase
 
     public function test_driver_mobile_view_renders_duty_and_available_orders(): void
     {
-        $response = $this->get(route('driver.index', ['driver_id' => $this->driver->id]));
+        $response = $this->actingAs($this->driverUser)->get(route('driver.index', ['driver_id' => $this->driver->id]));
 
         $response->assertStatus(200)
             ->assertSee('Driver Mobile Cockpit')
