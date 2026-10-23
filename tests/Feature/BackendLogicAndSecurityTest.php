@@ -186,6 +186,26 @@ class BackendLogicAndSecurityTest extends TestCase
             ->assertSessionHas('error', 'Akses ditolak. Anda bukan admin.');
     }
 
+    public function test_dispatcher_role_is_strictly_forbidden_from_admin_route(): void
+    {
+        $dispatcherUser = User::create([
+            'tenant_id' => $this->tenant->id,
+            'name' => 'Dispatcher Siska',
+            'email' => 'dispatcher@fasttrack.test',
+            'password' => bcrypt('password123'),
+            'role' => 'DISPATCHER',
+        ]);
+
+        $adminPrefix = config('app.admin_prefix', 'fleetpulse-ops-mgmt');
+
+        // Dispatcher attempts to access obfuscated admin dashboard -> Must be rejected
+        $response = $this->actingAs($dispatcherUser)
+            ->get("/{$adminPrefix}/dashboard");
+
+        $response->assertRedirect(route('home'))
+            ->assertSessionHas('error', 'Akses ditolak. Anda bukan admin.');
+    }
+
     public function test_old_predictable_admin_route_is_obfuscated_and_blocked(): void
     {
         // Direct access to /admin/dashboard

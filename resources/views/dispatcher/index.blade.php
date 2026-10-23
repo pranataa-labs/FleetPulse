@@ -10,7 +10,7 @@
         </div>
         <button onclick="document.getElementById('newOrderModal').classList.remove('hidden')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm transition shadow-sm">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Create New Delivery Order</span>
+            <span>Buat Order Pengiriman Baru</span>
         </button>
     </div>
 
@@ -148,60 +148,121 @@
 </div>
 
 <!-- Modal Create Order -->
-<div id="newOrderModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+<div id="newOrderModal" class="{{ request()->has('open_modal') ? '' : 'hidden' }} fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="font-bold text-slate-900 text-base">New Delivery Order</h3>
-            <button onclick="document.getElementById('newOrderModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+            <div>
+                <h3 class="font-bold text-slate-900 text-base">Buat Pesanan Pengiriman Baru</h3>
+                <p class="text-xs text-slate-500">Lengkapi data pengirim, penerima, dan armada untuk penugasan kurir otomatis.</p>
+            </div>
+            <button onclick="document.getElementById('newOrderModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
         <form action="{{ route('dispatcher.orders.store') }}" method="POST" class="space-y-4 text-xs">
             @csrf
-            <div class="space-y-2">
-                <div class="font-semibold text-slate-800">Sender Information</div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" name="sender_name" placeholder="Sender Name" value="PT Mitra Sejahtera" required class="p-2.5 rounded-lg border border-slate-300">
-                    <input type="text" name="sender_phone" placeholder="Sender Phone" value="081299887766" required class="p-2.5 rounded-lg border border-slate-300">
+            
+            <!-- Bagian 1: Pengirim -->
+            <div class="space-y-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80">
+                <div class="flex items-center gap-1.5 font-bold text-slate-900 text-xs">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+                    <span>1. Informasi Pengirim (Lokasi Penjemputan)</span>
                 </div>
-                <input type="text" name="pickup_address" placeholder="Pickup Address" value="Jl. Jenderal Sudirman Kav. 52, SCBD Jakarta" required class="w-full p-2.5 rounded-lg border border-slate-300">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" step="0.0000001" name="pickup_lat" value="-6.2250000" placeholder="Pickup Lat" required class="p-2 rounded-lg border border-slate-300 font-mono">
-                    <input type="number" step="0.0000001" name="pickup_lng" value="106.8090000" placeholder="Pickup Lng" required class="p-2 rounded-lg border border-slate-300 font-mono">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">Nama Pengirim / Toko</label>
+                        <input type="text" name="sender_name" placeholder="Contoh: PT Mitra Sejahtera" value="PT Mitra Sejahtera" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">No. HP / WhatsApp Pengirim</label>
+                        <input type="text" name="sender_phone" placeholder="Contoh: 081299887766" value="081299887766" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
+                    </div>
                 </div>
-            </div>
 
-            <div class="space-y-2 pt-2 border-t border-slate-100">
-                <div class="font-semibold text-slate-800">Recipient Information</div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" name="recipient_name" placeholder="Recipient Name" value="Dewi Lestari" required class="p-2.5 rounded-lg border border-slate-300">
-                    <input type="text" name="recipient_phone" placeholder="Recipient Phone" value="081311223344" required class="p-2.5 rounded-lg border border-slate-300">
-                </div>
-                <input type="text" name="dropoff_address" placeholder="Dropoff Address" value="Jl. Kemang Raya No. 10, Jakarta Selatan" required class="w-full p-2.5 rounded-lg border border-slate-300">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" step="0.0000001" name="dropoff_lat" value="-6.2600000" placeholder="Dropoff Lat" required class="p-2 rounded-lg border border-slate-300 font-mono">
-                    <input type="number" step="0.0000001" name="dropoff_lng" value="106.8150000" placeholder="Dropoff Lng" required class="p-2 rounded-lg border border-slate-300 font-mono">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Vehicle Type</label>
-                    <select name="vehicle_type" class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
-                        <option value="MOTORCYCLE">Motorcycle (Courier)</option>
-                        <option value="VAN">Van</option>
-                        <option value="BOX_TRUCK">Box Truck</option>
-                    </select>
+                    <label class="block font-medium text-slate-700 text-[11px] mb-1">Alamat Lengkap Penjemputan Paket</label>
+                    <input type="text" name="pickup_address" placeholder="Nama jalan, gedung, nomor kavling..." value="Jl. Jenderal Sudirman Kav. 52, SCBD Jakarta" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
                 </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Weight (KG)</label>
-                    <input type="number" step="0.1" name="weight_kg" value="2.0" class="w-full p-2.5 rounded-lg border border-slate-300">
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Lintang (Lat Penjemputan)</label>
+                        <input type="number" step="0.0000001" name="pickup_lat" value="-6.2250000" placeholder="-6.2250000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Bujur (Lng Penjemputan)</label>
+                        <input type="number" step="0.0000001" name="pickup_lng" value="106.8090000" placeholder="106.8090000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm transition">
-                Create & Auto-Dispatch Order
+            <!-- Bagian 2: Penerima -->
+            <div class="space-y-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80">
+                <div class="flex items-center gap-1.5 font-bold text-slate-900 text-xs">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>2. Informasi Penerima (Lokasi Pengantaran)</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">Nama Penerima Paket</label>
+                        <input type="text" name="recipient_name" placeholder="Contoh: Dewi Lestari" value="Dewi Lestari" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">No. HP / WhatsApp Penerima</label>
+                        <input type="text" name="recipient_phone" placeholder="Contoh: 081311223344" value="081311223344" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 text-[11px] mb-1">Alamat Lengkap Pengantaran Paket</label>
+                    <input type="text" name="dropoff_address" placeholder="Nama jalan, nomor rumah/kantor..." value="Jl. Kemang Raya No. 10, Jakarta Selatan" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Lintang (Lat Tujuan)</label>
+                        <input type="number" step="0.0000001" name="dropoff_lat" value="-6.2600000" placeholder="-6.2600000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Bujur (Lng Tujuan)</label>
+                        <input type="number" step="0.0000001" name="dropoff_lng" value="106.8150000" placeholder="106.8150000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 3: Armada & Kargo -->
+            <div class="space-y-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80">
+                <div class="flex items-center gap-1.5 font-bold text-slate-900 text-xs">
+                    <i data-lucide="package" class="w-3.5 h-3.5 text-amber-600"></i>
+                    <span>3. Jenis Armada &amp; Beban Paket</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">Pilihan Kendaraan / Armada</label>
+                        <select name="vehicle_type" class="w-full p-2.5 rounded-lg border border-slate-300 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                            <option value="MOTORCYCLE">Sepeda Motor (Kurir Standar)</option>
+                            <option value="VAN">Mobil Van (Barang Sedang)</option>
+                            <option value="BOX_TRUCK">Truk Box (Muatan Besar / Kargo)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 text-[11px] mb-1">Perkiraan Berat Kargo (KG)</label>
+                        <input type="number" step="0.1" name="weight_kg" value="2.0" class="w-full p-2.5 rounded-lg border border-slate-300 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
+                    </div>
+                </div>
+                <div class="text-[11px] text-slate-500 flex items-center gap-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
+                    <span>Jarak tempuh (Haversine km) dan ongkos kirim total akan dikalkulasi otomatis oleh sistem saat disimpan.</span>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition shadow-sm flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Simpan Pesanan &amp; Siarkan ke Kurir (Auto-Dispatch)</span>
             </button>
         </form>
     </div>
