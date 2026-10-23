@@ -98,14 +98,14 @@ class FrontendUiAndWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_landing_portal_loads_with_active_shipments_and_role_switcher(): void
+    public function test_landing_portal_loads_with_active_shipments(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertStatus(200)
             ->assertSee('FleetPulse')
             ->assertSee('FP-TEST-001')
-            ->assertSee('1-Click Role Switcher')
+            ->assertSee('Enterprise Logistics Platform')
             ->assertSee('SwiftExpress Courier');
     }
 
