@@ -110,24 +110,29 @@ class DispatcherController extends Controller
             'sender_name' => 'required|string|max:100',
             'sender_phone' => 'required|string|max:20',
             'pickup_address' => 'required|string|max:255',
-            'pickup_lat' => 'required|numeric|between:-90,90',
-            'pickup_lng' => 'required|numeric|between:-180,180',
+            'pickup_lat' => 'nullable|numeric|between:-90,90',
+            'pickup_lng' => 'nullable|numeric|between:-180,180',
             'recipient_name' => 'required|string|max:100',
             'recipient_phone' => 'required|string|max:20',
             'dropoff_address' => 'required|string|max:255',
-            'dropoff_lat' => 'required|numeric|between:-90,90',
-            'dropoff_lng' => 'required|numeric|between:-180,180',
+            'dropoff_lat' => 'nullable|numeric|between:-90,90',
+            'dropoff_lng' => 'nullable|numeric|between:-180,180',
             'vehicle_type' => 'required|string|in:MOTORCYCLE,VAN,BOX_TRUCK,SEMI_TRAILER',
             'weight_kg' => 'required|numeric|min:0.1',
             'notes' => 'nullable|string|max:500',
         ]);
 
+        $pickupLat = !empty($validated['pickup_lat']) ? (float) $validated['pickup_lat'] : -6.2250000;
+        $pickupLng = !empty($validated['pickup_lng']) ? (float) $validated['pickup_lng'] : 106.8090000;
+        $dropoffLat = !empty($validated['dropoff_lat']) ? (float) $validated['dropoff_lat'] : -6.2600000;
+        $dropoffLng = !empty($validated['dropoff_lng']) ? (float) $validated['dropoff_lng'] : 106.8150000;
+
         // 1. Calculate Distance using Haversine
         $distanceKm = GeoDistanceService::haversine(
-            (float) $validated['pickup_lat'],
-            (float) $validated['pickup_lng'],
-            (float) $validated['dropoff_lat'],
-            (float) $validated['dropoff_lng']
+            $pickupLat,
+            $pickupLng,
+            $dropoffLat,
+            $dropoffLng
         );
 
         // 2. Calculate Fee using Pricing Matrix
@@ -144,13 +149,13 @@ class DispatcherController extends Controller
             'sender_name' => $validated['sender_name'],
             'sender_phone' => $validated['sender_phone'],
             'pickup_address' => $validated['pickup_address'],
-            'pickup_lat' => $validated['pickup_lat'],
-            'pickup_lng' => $validated['pickup_lng'],
+            'pickup_lat' => $pickupLat,
+            'pickup_lng' => $pickupLng,
             'recipient_name' => $validated['recipient_name'],
             'recipient_phone' => $validated['recipient_phone'],
             'dropoff_address' => $validated['dropoff_address'],
-            'dropoff_lat' => $validated['dropoff_lat'],
-            'dropoff_lng' => $validated['dropoff_lng'],
+            'dropoff_lat' => $dropoffLat,
+            'dropoff_lng' => $dropoffLng,
             'vehicle_type' => $validated['vehicle_type'],
             'weight_kg' => $validated['weight_kg'],
             'distance_km' => $distanceKm,

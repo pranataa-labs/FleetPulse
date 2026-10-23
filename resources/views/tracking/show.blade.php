@@ -106,6 +106,53 @@
                     @endforelse
                 </div>
             </div>
+
+            <!-- Obrolan Transparan Pengiriman (4-Pihak) -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-100 text-blue-700">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                        </span>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-xs">Obrolan Pengiriman Transparan</h3>
+                            <p class="text-[10px] text-slate-500">Pengirim &bull; Kurir &bull; Dispatcher &bull; Penerima</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live
+                    </span>
+                </div>
+
+                <!-- Messages Stream -->
+                <div id="trackingChatStream" class="h-60 overflow-y-auto space-y-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                    <div class="text-center py-6 text-slate-400 text-xs">Memuat obrolan transparan...</div>
+                </div>
+
+                <!-- Chat Sender Role Selection & Input -->
+                <form id="trackingChatForm" onsubmit="sendTrackingMessage(event)" class="space-y-2">
+                    <div class="flex items-center gap-3 text-xs bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <span class="text-slate-500 text-[11px] font-medium shrink-0">Kirim Sebagai:</span>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] text-slate-700 font-medium">
+                            <input type="radio" name="chat_sender_role" value="SENDER" class="text-slate-900 focus:ring-0">
+                            <span>Pengirim ({{ $order->sender_name }})</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] text-slate-700 font-medium">
+                            <input type="radio" name="chat_sender_role" value="RECIPIENT" checked class="text-slate-900 focus:ring-0">
+                            <span>Penerima ({{ $order->recipient_name }})</span>
+                        </label>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="trackingChatMessage" placeholder="Tulis pesan ke kurir &amp; dispatcher..." required
+                               class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 bg-white">
+                        <button type="submit" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition shadow-xs flex items-center gap-1.5 shrink-0">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            <span>Kirim</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -236,6 +283,101 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Polling error:', err);
         }
     }, 4000);
+    // 7. Transparent 4-Party Chat Engine (Public Tracking View)
+    const trackingOrderId = {{ $order->id }};
+    const senderCustomerName = "{{ $order->sender_name }}";
+    const recipientCustomerName = "{{ $order->recipient_name }}";
+
+    async function fetchTrackingChat() {
+        try {
+            const res = await fetch(`/api/orders/${trackingOrderId}/messages`);
+            if (!res.ok) return;
+            const data = await res.json();
+            const stream = document.getElementById('trackingChatStream');
+            if (!stream) return;
+
+            if (!data.messages || data.messages.length === 0) {
+                stream.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs">Belum ada percakapan. Kirim pesan untuk menyapa kurir & dispatcher.</div>';
+                return;
+            }
+
+            const roleBadges = {
+                'SYSTEM': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-700">SISTEM</span>',
+                'DRIVER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">KURIR</span>',
+                'DISPATCHER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800">DISPATCHER</span>',
+                'SENDER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800">PENGIRIM</span>',
+                'RECIPIENT': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-100 text-indigo-800">PENERIMA</span>'
+            };
+
+            let html = '';
+            data.messages.forEach(msg => {
+                if (msg.is_system) {
+                    html += `
+                        <div class="text-center my-2">
+                            <span class="inline-block px-3 py-1 rounded-full bg-slate-200/90 border border-slate-300 text-[10px] text-slate-700 font-medium max-w-xs">
+                                ℹ️ ${msg.message} <span class="text-slate-400 text-[9px] ml-1">${msg.created_at}</span>
+                            </span>
+                        </div>`;
+                } else {
+                    html += `
+                        <div class="flex justify-start">
+                            <div class="max-w-[85%] rounded-2xl bg-white border border-slate-200 p-2.5 shadow-xs space-y-1">
+                                <div class="flex items-center justify-between gap-3 text-[10px]">
+                                    <span class="flex items-center gap-1 font-semibold text-slate-800">
+                                        ${roleBadges[msg.sender_role] || ''}
+                                        ${msg.sender_name}
+                                    </span>
+                                    <span class="text-slate-400">${msg.created_at}</span>
+                                </div>
+                                <p class="text-xs text-slate-700 leading-relaxed">${msg.message}</p>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            const shouldScroll = stream.scrollHeight - stream.clientHeight <= stream.scrollTop + 60;
+            stream.innerHTML = html;
+            if (shouldScroll) {
+                stream.scrollTop = stream.scrollHeight;
+            }
+        } catch (e) {
+            console.error('Tracking chat poll error:', e);
+        }
+    }
+
+    window.sendTrackingMessage = async function(e) {
+        e.preventDefault();
+        const input = document.getElementById('trackingChatMessage');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        const roleRadio = document.querySelector('input[name="chat_sender_role"]:checked');
+        const role = roleRadio ? roleRadio.value : 'RECIPIENT';
+        const senderName = role === 'SENDER' 
+            ? `${senderCustomerName} (Pengirim)`
+            : `${recipientCustomerName} (Penerima)`;
+
+        try {
+            const res = await fetch(`/api/orders/${trackingOrderId}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    sender_role: role,
+                    sender_name: senderName,
+                    message: msg
+                })
+            });
+            if (res.ok) {
+                input.value = '';
+                fetchTrackingChat();
+            }
+        } catch (err) {
+            console.error('Tracking send message error:', err);
+        }
+    };
+
+    fetchTrackingChat();
+    setInterval(fetchTrackingChat, 3000);
 });
 </script>
 @endpush

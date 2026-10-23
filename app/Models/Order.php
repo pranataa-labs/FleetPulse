@@ -70,4 +70,9 @@ class Order extends Model
     {
         return $this->hasMany(TrackingCheckpoint::class)->orderBy('recorded_at', 'asc');
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(OrderMessage::class)->orderBy('created_at', 'asc');
+    }
 }

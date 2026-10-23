@@ -5,10 +5,6 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
-                <span>Obfuscated Admin Operations Panel: /{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}</span>
-            </div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900 mt-1">Platform Operations & SaaS Control</h1>
             <p class="text-xs text-slate-500">Global tenant provisioning, fleet capacity management, rate cards, and live audit telemetry.</p>
         </div>

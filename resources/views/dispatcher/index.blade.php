@@ -126,6 +126,10 @@
                                         </button>
                                     </form>
                                 @endif
+                                <button type="button" onclick="openDispatcherChat({{ $o->id }}, '{{ $o->order_number }}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-medium transition inline-flex items-center gap-1">
+                                    <i data-lucide="message-square" class="w-3 h-3 text-blue-600"></i>
+                                    <span>Chat</span>
+                                </button>
                                 <a href="{{ route('tracking.show', $o->tracking_token) }}" target="_blank" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-medium transition inline-block">
                                     Track
                                 </a>
@@ -184,17 +188,8 @@
                 <div>
                     <label class="block font-medium text-slate-700 text-[11px] mb-1">Alamat Lengkap Penjemputan Paket</label>
                     <input type="text" name="pickup_address" placeholder="Nama jalan, gedung, nomor kavling..." value="Jl. Jenderal Sudirman Kav. 52, SCBD Jakarta" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Lintang (Lat Penjemputan)</label>
-                        <input type="number" step="0.0000001" name="pickup_lat" value="-6.2250000" placeholder="-6.2250000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
-                    </div>
-                    <div>
-                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Bujur (Lng Penjemputan)</label>
-                        <input type="number" step="0.0000001" name="pickup_lng" value="106.8090000" placeholder="106.8090000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
-                    </div>
+                    <input type="hidden" name="pickup_lat" value="-6.2250000">
+                    <input type="hidden" name="pickup_lng" value="106.8090000">
                 </div>
             </div>
 
@@ -219,17 +214,8 @@
                 <div>
                     <label class="block font-medium text-slate-700 text-[11px] mb-1">Alamat Lengkap Pengantaran Paket</label>
                     <input type="text" name="dropoff_address" placeholder="Nama jalan, nomor rumah/kantor..." value="Jl. Kemang Raya No. 10, Jakarta Selatan" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500 text-xs">
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Lintang (Lat Tujuan)</label>
-                        <input type="number" step="0.0000001" name="dropoff_lat" value="-6.2600000" placeholder="-6.2600000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
-                    </div>
-                    <div>
-                        <label class="block font-medium text-slate-600 text-[11px] mb-1">GPS Bujur (Lng Tujuan)</label>
-                        <input type="number" step="0.0000001" name="dropoff_lng" value="106.8150000" placeholder="106.8150000" required class="w-full p-2 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-500">
-                    </div>
+                    <input type="hidden" name="dropoff_lat" value="-6.2600000">
+                    <input type="hidden" name="dropoff_lng" value="106.8150000">
                 </div>
             </div>
 
@@ -267,10 +253,163 @@
         </form>
     </div>
 </div>
+
+<!-- Modal Dispatcher 4-Party Transparent Chat -->
+<div id="dispatcherChatModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2">
+                <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-700">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                </span>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm">Obrolan Pengiriman Transparan</h3>
+                    <p class="text-[11px] text-slate-500" id="chatOrderSubtitle">Order #...</p>
+                </div>
+            </div>
+            <button onclick="closeDispatcherChat()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Pesan yang dikirimkan di sini dapat dilihat secara transparan oleh Pengirim, Kurir, Dispatcher, dan Penerima.</span>
+        </div>
+
+        <!-- Chat Stream -->
+        <div id="dispatcherChatStream" class="h-64 overflow-y-auto space-y-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+            <div class="text-center py-6 text-slate-400">Memuat obrolan...</div>
+        </div>
+
+        <!-- Chat Form -->
+        <form onsubmit="sendDispatcherMessage(event)" class="flex gap-2">
+            <input type="text" id="dispatcherChatMessage" placeholder="Kirim instruksi / update ke kurir, pengirim &amp; penerima..." required
+                   class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 bg-white">
+            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition shadow-xs flex items-center gap-1.5 shrink-0">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span>Kirim</span>
+            </button>
+        </form>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
+let currentChatOrderId = null;
+let chatPollInterval = null;
+const dispatcherName = "{{ auth()->user()->name }} (Dispatcher)";
+
+function openDispatcherChat(orderId, orderNumber) {
+    currentChatOrderId = orderId;
+    document.getElementById('chatOrderSubtitle').textContent = `Order #${orderNumber} • Koordinasi Lapangan`;
+    document.getElementById('dispatcherChatModal').classList.remove('hidden');
+    fetchDispatcherChat();
+    if (chatPollInterval) clearInterval(chatPollInterval);
+    chatPollInterval = setInterval(fetchDispatcherChat, 3000);
+}
+
+function closeDispatcherChat() {
+    document.getElementById('dispatcherChatModal').classList.add('hidden');
+    if (chatPollInterval) clearInterval(chatPollInterval);
+    currentChatOrderId = null;
+}
+
+async function fetchDispatcherChat() {
+    if (!currentChatOrderId) return;
+    try {
+        const res = await fetch(`/api/orders/${currentChatOrderId}/messages`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const stream = document.getElementById('dispatcherChatStream');
+        if (!stream) return;
+
+        if (!data.messages || data.messages.length === 0) {
+            stream.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs">Belum ada percakapan untuk order ini.</div>';
+            return;
+        }
+
+        const roleBadges = {
+            'SYSTEM': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-700">SISTEM</span>',
+            'DRIVER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">KURIR</span>',
+            'DISPATCHER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800">DISPATCHER</span>',
+            'SENDER': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800">PENGIRIM</span>',
+            'RECIPIENT': '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-100 text-indigo-800">PENERIMA</span>'
+        };
+
+        let html = '';
+        data.messages.forEach(msg => {
+            if (msg.is_system) {
+                html += `
+                    <div class="text-center my-2">
+                        <span class="inline-block px-3 py-1 rounded-full bg-slate-200/90 border border-slate-300 text-[10px] text-slate-700 font-medium max-w-sm">
+                            ℹ️ ${msg.message} <span class="text-slate-400 text-[9px] ml-1">${msg.created_at}</span>
+                        </span>
+                    </div>`;
+            } else if (msg.sender_role === 'DISPATCHER') {
+                html += `
+                    <div class="flex justify-end">
+                        <div class="max-w-[85%] rounded-2xl rounded-tr-none bg-blue-600 text-white p-2.5 shadow-xs space-y-1">
+                            <div class="flex items-center justify-between gap-3 text-[10px] text-blue-100">
+                                <span class="font-semibold">${msg.sender_name}</span>
+                                <span>${msg.created_at}</span>
+                            </div>
+                            <p class="text-xs leading-relaxed">${msg.message}</p>
+                        </div>
+                    </div>`;
+            } else {
+                html += `
+                    <div class="flex justify-start">
+                        <div class="max-w-[85%] rounded-2xl rounded-tl-none bg-white border border-slate-200 p-2.5 shadow-xs space-y-1">
+                            <div class="flex items-center justify-between gap-3 text-[10px]">
+                                <span class="flex items-center gap-1 font-semibold text-slate-800">
+                                    ${roleBadges[msg.sender_role] || ''}
+                                    ${msg.sender_name}
+                                </span>
+                                <span class="text-slate-400">${msg.created_at}</span>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed">${msg.message}</p>
+                        </div>
+                    </div>`;
+            }
+        });
+
+        const shouldScroll = stream.scrollHeight - stream.clientHeight <= stream.scrollTop + 60;
+        stream.innerHTML = html;
+        if (shouldScroll) {
+            stream.scrollTop = stream.scrollHeight;
+        }
+    } catch (e) {
+        console.error('Dispatcher chat error:', e);
+    }
+}
+
+async function sendDispatcherMessage(e) {
+    e.preventDefault();
+    const input = document.getElementById('dispatcherChatMessage');
+    const msg = input.value.trim();
+    if (!msg || !currentChatOrderId) return;
+
+    try {
+        const res = await fetch(`/api/orders/${currentChatOrderId}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                sender_role: 'DISPATCHER',
+                sender_name: dispatcherName,
+                message: msg
+            })
+        });
+        if (res.ok) {
+            input.value = '';
+            fetchDispatcherChat();
+        }
+    } catch (err) {
+        console.error('Dispatcher send message error:', err);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const dispatchMap = L.map('dispatchMap').setView([-6.2000000, 106.8166667], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

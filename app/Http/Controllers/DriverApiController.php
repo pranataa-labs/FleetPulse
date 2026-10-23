@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\DriverLocationUpdated;
 use App\Models\Driver;
 use App\Models\Order;
+use App\Models\OrderMessage;
 use App\Models\TrackingCheckpoint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -155,6 +156,21 @@ class DriverApiController extends Controller
                 ], 409); // 409 Conflict
             }
 
+            // Auto-create transparent chat room thread (Kurir, Pengirim, Dispatcher, Penerima)
+            $driver = Driver::withoutGlobalScope('tenant')->with('user')->find($driverId);
+            $driverName = $driver?->user?->name ?? 'Kurir';
+
+            OrderMessage::firstOrCreate(
+                [
+                    'order_id' => $claimedOrder->id,
+                    'sender_role' => 'SYSTEM',
+                ],
+                [
+                    'sender_name' => 'Sistem FleetPulse',
+                    'message' => "Ruang koordinasi aktif. Kurir {$driverName} telah mengambil tugas pengantaran ini ({$claimedOrder->order_number}). Pengirim, Kurir, Dispatcher, dan Penerima kini terhubung dalam obrolan transparan.",
+                ]
+            );
+
             Log::info('Order successfully claimed with pessimistic lock', [
                 'order_id' => $claimedOrder->id,
                 'driver_id' => $driverId,
@@ -209,6 +225,22 @@ class DriverApiController extends Controller
             'note' => $validated['note'] ?? "Order status updated to {$validated['status']}.",
             'recorded_at' => now(),
         ]);
+
+        if ($validated['status'] === 'PICKED_UP') {
+            OrderMessage::create([
+                'order_id' => $order->id,
+                'sender_role' => 'SYSTEM',
+                'sender_name' => 'Sistem FleetPulse',
+                'message' => 'Paket telah diambil (PICKED UP) oleh kurir dari lokasi penjemputan dan sedang meluncur ke alamat penerima.',
+            ]);
+        } elseif ($validated['status'] === 'DELIVERED') {
+            OrderMessage::create([
+                'order_id' => $order->id,
+                'sender_role' => 'SYSTEM',
+                'sender_name' => 'Sistem FleetPulse',
+                'message' => 'Paket telah berhasil diserahkan kepada penerima (DELIVERED). Pengiriman selesai dengan sukses.',
+            ]);
+        }
 
         Log::info('Order status updated', [
             'order_id' => $order->id,

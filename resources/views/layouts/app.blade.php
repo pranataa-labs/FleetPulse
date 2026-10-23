@@ -106,8 +106,8 @@
                             <span>Dispatch</span>
                         </a>
                         <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" 
-                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->is(config('app.admin_prefix', 'fleetpulse-ops-mgmt').'*') ? 'bg-amber-100/80 text-amber-900 font-semibold border border-amber-300' : 'text-amber-800 bg-amber-50/60 hover:bg-amber-100 hover:text-amber-900 border border-amber-200' }}">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
+                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->is(config('app.admin_prefix', 'fleetpulse-ops-mgmt').'*') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-500"></i>
                             <span>Admin</span>
                         </a>
                         <a href="{{ route('home') }}" 
@@ -175,8 +175,8 @@
                                 </a>
 
                                 @if(auth()->user()->isSuperAdmin() || auth()->user()->isTenantAdmin())
-                                    <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-800 hover:bg-amber-50 flex items-center gap-2 transition">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
+                                    <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-2 transition">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-500"></i>
                                         <span>Operations Admin</span>
                                     </a>
                                 @endif
@@ -239,7 +239,7 @@
                     <a href="{{ route('dispatcher.index') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-50">
                         Dispatch
                     </a>
-                    <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="block px-3 py-2 rounded-md text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200">
+                    <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-50">
                         Admin
                     </a>
                     <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-600 hover:bg-slate-50">
@@ -307,7 +307,7 @@
                 <span>— Multi-Tenant Logistics & Live Fleet Tracking SaaS</span>
             </div>
             <div class="text-xs text-slate-400">
-                PZN Standard Daily Rotating Logging (14 Days) &bullet; Obfuscated Admin Protection
+                PZN Standard Daily Rotating Logging (14 Days) &bullet; High Reliability Telemetry
             </div>
         </div>
     </footer>

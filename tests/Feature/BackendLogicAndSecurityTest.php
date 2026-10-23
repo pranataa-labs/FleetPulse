@@ -264,4 +264,109 @@ class BackendLogicAndSecurityTest extends TestCase
         $this->assertTrue(File::exists($logPath));
         $this->assertStringContainsString('PZN Daily Log Test verification for FleetPulse', File::get($logPath));
     }
+
+    public function test_claiming_order_automatically_creates_transparent_chat_room(): void
+    {
+        $order = Order::create([
+            'tenant_id' => $this->tenant->id,
+            'sender_name' => 'Toko Buku Maju',
+            'sender_phone' => '081233445566',
+            'pickup_address' => 'Jl. Sudirman No. 1',
+            'pickup_lat' => -6.2000000,
+            'pickup_lng' => 106.8160000,
+            'recipient_name' => 'Siti Rahma',
+            'recipient_phone' => '081399887766',
+            'dropoff_address' => 'Jl. Gatot Subroto No. 5',
+            'dropoff_lat' => -6.2300000,
+            'dropoff_lng' => 106.8200000,
+            'vehicle_type' => 'MOTORCYCLE',
+            'weight_kg' => 1.5,
+            'distance_km' => 3.5,
+            'total_fee' => 18000,
+            'delivery_status' => 'DISPATCHED',
+        ]);
+
+        $this->assertCount(0, $order->messages);
+
+        // Driver claims order
+        $response = $this->postJson(route('api.driver.claim_order', ['orderId' => $order->id]), [
+            'driver_id' => $this->driver1->id,
+        ]);
+
+        $response->assertStatus(200);
+
+        // Verify transparent chat thread was auto-created
+        $messages = $order->fresh()->messages;
+        $this->assertCount(1, $messages);
+        $this->assertEquals('SYSTEM', $messages->first()->sender_role);
+        $this->assertStringContainsString('Ruang koordinasi aktif', $messages->first()->message);
+        $this->assertStringContainsString('Driver One', $messages->first()->message);
+    }
+
+    public function test_transparent_chat_message_creation_and_retrieval(): void
+    {
+        $order = Order::create([
+            'tenant_id' => $this->tenant->id,
+            'sender_name' => 'Toko Elektronik Barokah',
+            'sender_phone' => '081211112222',
+            'pickup_address' => 'Mall Ambassador',
+            'pickup_lat' => -6.2200000,
+            'pickup_lng' => 106.8250000,
+            'recipient_name' => 'Ahmad Dahlan',
+            'recipient_phone' => '081344445555',
+            'dropoff_address' => 'Kuningan Barat',
+            'dropoff_lat' => -6.2350000,
+            'dropoff_lng' => 106.8300000,
+            'vehicle_type' => 'MOTORCYCLE',
+            'weight_kg' => 2.0,
+            'distance_km' => 2.0,
+            'total_fee' => 15000,
+            'delivery_status' => 'ACCEPTED',
+        ]);
+
+        // Post message as SENDER
+        $this->postJson(route('api.orders.messages.store', ['orderId' => $order->id]), [
+            'sender_role' => 'SENDER',
+            'sender_name' => 'Toko Elektronik Barokah',
+            'message' => 'Paket sudah siap di lobby timur, tolong hubungi satpam ya mas.',
+        ])->assertStatus(201);
+
+        // Post message as DRIVER
+        $this->postJson(route('api.orders.messages.store', ['orderId' => $order->id]), [
+            'sender_role' => 'DRIVER',
+            'sender_name' => 'Driver One (Kurir)',
+            'message' => 'Siap pak, saya sudah dekat sekitar 3 menit lagi sampai.',
+        ])->assertStatus(201);
+
+        // Retrieve full transparent chat thread
+        $response = $this->getJson(route('api.orders.messages.index', ['orderId' => $order->id]));
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'messages')
+            ->assertJsonFragment(['sender_role' => 'SENDER'])
+            ->assertJsonFragment(['sender_role' => 'DRIVER']);
+    }
+
+    public function test_dispatcher_can_create_order_without_providing_lat_lng(): void
+    {
+        $response = $this->actingAs($this->adminUser)->post(route('dispatcher.orders.store'), [
+            'sender_name' => 'Kopi Kenangan Senayan',
+            'sender_phone' => '081288889999',
+            'pickup_address' => 'Senayan City Lt. LG',
+            'recipient_name' => 'Rina Gunawan',
+            'recipient_phone' => '081377778888',
+            'dropoff_address' => 'Menara Astra Lt. 15',
+            'vehicle_type' => 'MOTORCYCLE',
+            'weight_kg' => 1.0,
+        ]);
+
+        $response->assertRedirect(route('dispatcher.index'));
+
+        $order = Order::where('recipient_name', 'Rina Gunawan')->first();
+        $this->assertNotNull($order);
+        $this->assertEquals('DISPATCHED', $order->delivery_status);
+        $this->assertNotNull($order->pickup_lat);
+        $this->assertNotNull($order->dropoff_lat);
+        $this->assertGreaterThan(0, $order->distance_km);
+        $this->assertGreaterThan(0, $order->total_fee);
+    }
 }
