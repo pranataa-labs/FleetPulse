@@ -231,7 +231,14 @@ class DriverApiController extends Controller
                 'order_id' => $order->id,
                 'sender_role' => 'SYSTEM',
                 'sender_name' => 'Sistem FleetPulse',
-                'message' => 'Paket telah diambil (PICKED UP) oleh kurir dari lokasi penjemputan dan sedang meluncur ke alamat penerima.',
+                'message' => 'Paket fisik telah berhasil diambil (PICKED UP) oleh kurir dari tangan pengirim.',
+            ]);
+        } elseif ($validated['status'] === 'IN_TRANSIT') {
+            OrderMessage::create([
+                'order_id' => $order->id,
+                'sender_role' => 'SYSTEM',
+                'sender_name' => 'Sistem FleetPulse',
+                'message' => 'Kurir telah berangkat dan sedang dalam perjalanan meluncur menuju alamat penerima (IN TRANSIT). Pantau live di peta.',
             ]);
         } elseif ($validated['status'] === 'DELIVERED') {
             OrderMessage::create([

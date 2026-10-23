@@ -71,17 +71,31 @@
                 </div>
             </div>
 
-            <!-- Workflow Buttons -->
-            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
-                <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'PICKED_UP')" class="py-2 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-medium transition">
-                    Sudah Ambil
-                </button>
-                <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'IN_TRANSIT')" class="py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">
-                    Jalan Antar
-                </button>
-                <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'DELIVERED')" class="py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-medium transition shadow-sm">
-                    Selesai Antar
-                </button>
+            <!-- Dynamic Progressive Workflow Button (Step-by-Step) -->
+            <div class="pt-2 border-t border-slate-100">
+                @if($activeOrder->delivery_status === 'ACCEPTED')
+                    <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'PICKED_UP')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="package-check" class="w-4 h-4"></i>
+                        <span>1. Konfirmasi Ambil Fisik Paket dari Pengirim</span>
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center mt-1.5">Tekan saat barang fisik sudah Anda terima dari tangan pengirim.</p>
+                @elseif($activeOrder->delivery_status === 'PICKED_UP')
+                    <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'IN_TRANSIT')" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="navigation" class="w-4 h-4"></i>
+                        <span>2. Mulai Jalan Antar ke Alamat Penerima</span>
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center mt-1.5">Tekan saat Anda mulai berkendara menuju alamat tujuan.</p>
+                @elseif($activeOrder->delivery_status === 'IN_TRANSIT')
+                    <button onclick="updateOrderStatus({{ $activeOrder->id }}, 'DELIVERED')" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>3. Selesai Antar (Serahkan ke Penerima)</span>
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center mt-1.5">Tekan saat paket telah sukses diserahkan ke penerima.</p>
+                @else
+                    <div class="py-2.5 px-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium text-center">
+                        Pesanan ini berstatus <strong>{{ $activeOrder->delivery_status }}</strong>.
+                    </div>
+                @endif
             </div>
         </div>
 
