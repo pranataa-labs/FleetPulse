@@ -105,25 +105,79 @@
             <!-- Right: User / Auth Controls -->
             <div class="flex items-center gap-2 shrink-0">
                 @auth
-                    <div class="hidden sm:flex items-center gap-2.5 pl-2 border-l border-slate-200/80">
-                        <div class="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-semibold flex items-center justify-center shrink-0 shadow-xs">
-                            {{ substr(auth()->user()->name, 0, 1) }}
-                        </div>
-                        <div class="text-left hidden lg:block">
-                            <div class="text-xs font-semibold text-slate-800 leading-none truncate max-w-[120px]">{{ auth()->user()->name }}</div>
-                            <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{{ auth()->user()->role }}</span>
+                    <!-- Unified User Profile & Logout Dropdown -->
+                    <div class="relative" id="userDropdownWrapper">
+                        <button type="button" 
+                                id="userDropdownBtn"
+                                onclick="toggleUserDropdown(event)"
+                                class="h-8 pl-1 pr-2.5 rounded-full sm:rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-100 flex items-center gap-2 transition-colors text-slate-700 bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10">
+                            <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                {{ substr(auth()->user()->name, 0, 1) }}
+                            </span>
+                            <span class="text-xs font-medium text-slate-800 max-w-[110px] truncate hidden sm:inline">
+                                {{ auth()->user()->name }}
+                            </span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" id="userDropdownChevron"></i>
+                        </button>
+
+                        <!-- Floating Dropdown Menu (Shadcn Style) -->
+                        <div id="userDropdownMenu" 
+                             class="{{ request()->has('open_menu') ? '' : 'hidden' }} absolute right-0 mt-2 w-60 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 z-50 animate-in fade-in slide-in-from-top-1">
+                            
+                            <!-- Profile Header -->
+                            <div class="px-3.5 py-2.5 border-b border-slate-100 space-y-1">
+                                <div class="text-xs font-bold text-slate-900 leading-tight">{{ auth()->user()->name }}</div>
+                                <div class="text-[11px] text-slate-500 truncate">{{ auth()->user()->email }}</div>
+                                
+                                <div class="pt-1 flex items-center gap-1.5 flex-wrap">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
+                                        {{ auth()->user()->role }}
+                                    </span>
+
+                                    @if(auth()->user()->isDriver() && auth()->user()->driver)
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                            <i data-lucide="truck" class="w-2.5 h-2.5"></i>
+                                            <span>{{ auth()->user()->driver->fleet?->license_plate ?? 'Kurir' }}</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Navigation Shortcuts -->
+                            <div class="px-1.5 py-1 space-y-0.5">
+                                @if(auth()->user()->isDriver())
+                                    <a href="{{ route('driver.index') }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-2 transition">
+                                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600"></i>
+                                        <span>Driver Cockpit (PWA)</span>
+                                    </a>
+                                @endif
+
+                                <a href="{{ route('dispatcher.index') }}" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-2 transition">
+                                    <i data-lucide="map" class="w-3.5 h-3.5 text-slate-500"></i>
+                                    <span>Dispatch Center</span>
+                                </a>
+
+                                @if(auth()->user()->isSuperAdmin() || auth()->user()->isTenantAdmin())
+                                    <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-800 hover:bg-amber-50 flex items-center gap-2 transition">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
+                                        <span>Operations Admin</span>
+                                    </a>
+                                @endif
+                            </div>
+
+                            <!-- Logout Action -->
+                            <div class="pt-1 border-t border-slate-100 px-1.5">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" 
+                                            class="w-full px-2.5 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition text-left">
+                                        <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-600"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" 
-                                title="Sign Out"
-                                class="h-8 px-2.5 rounded-md border border-slate-200 hover:bg-slate-100 text-xs font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
-                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                            <span class="hidden sm:inline">Logout</span>
-                        </button>
-                    </form>
                 @else
                     <a href="{{ route('login') }}" 
                        class="h-8 px-3 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition shadow-xs inline-flex items-center gap-1.5">
@@ -166,6 +220,27 @@
                         Operations Admin
                     </a>
                 @endif
+
+                <div class="pt-2 mt-2 border-t border-slate-100 space-y-2">
+                    <div class="px-3 py-1.5 flex items-center justify-between text-xs">
+                        <div>
+                            <div class="font-bold text-slate-800">{{ auth()->user()->name }}</div>
+                            <div class="text-[10px] text-slate-400">{{ auth()->user()->role }}</div>
+                        </div>
+                        @if(auth()->user()->isDriver() && auth()->user()->driver)
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-200">
+                                {{ auth()->user()->driver->fleet?->license_plate ?? 'Kurir' }}
+                            </span>
+                        @endif
+                    </div>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
             @endauth
         </div>
     </header>
@@ -213,12 +288,49 @@
 
     <script>
         lucide.createIcons();
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             if (menu) {
                 menu.classList.toggle('hidden');
             }
         }
+
+        function toggleUserDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('userDropdownMenu');
+            const chevron = document.getElementById('userDropdownChevron');
+            if (menu) {
+                const isHidden = menu.classList.contains('hidden');
+                menu.classList.toggle('hidden');
+                if (chevron) {
+                    chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const wrapper = document.getElementById('userDropdownWrapper');
+            const menu = document.getElementById('userDropdownMenu');
+            const chevron = document.getElementById('userDropdownChevron');
+            if (wrapper && menu && !wrapper.contains(event.target)) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close dropdown on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const menu = document.getElementById('userDropdownMenu');
+                const chevron = document.getElementById('userDropdownChevron');
+                if (menu && !menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
     </script>
     @stack('scripts')
 </body>
