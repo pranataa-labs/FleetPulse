@@ -128,8 +128,9 @@
                                         {{ $order->vehicle_type }}
                                     </span>
                                 </td>
-                                <td class="py-3.5 px-4 text-xs font-medium text-slate-800">
-                                    {{ $order->distance_km }} km &bullet; Rp {{ number_format($order->total_fee, 0, ',', '.') }}
+                                <td class="py-3.5 px-4 text-xs">
+                                    <div class="text-slate-500 font-medium whitespace-nowrap">{{ $order->distance_km }} km</div>
+                                    <div class="font-semibold text-slate-900 whitespace-nowrap">Rp {{ number_format($order->total_fee, 0, ',', '.') }}</div>
                                 </td>
                                 <td class="py-3.5 px-4">
                                     @php

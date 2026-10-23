@@ -52,7 +52,7 @@
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
             
-            <!-- Left: Brand & Tenant Identity & Role Scope -->
+            <!-- Left: Brand Identity -->
             <div class="flex items-center gap-2.5 shrink-0">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group">
                     <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs group-hover:bg-slate-800 transition">
@@ -60,42 +60,12 @@
                     </span>
                     <span class="font-bold text-slate-900 tracking-tight text-sm">FleetPulse</span>
                 </a>
-
-                @auth
-                    @if(auth()->user()->isDriver())
-                        <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wider">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            Portal Kurir
-                        </span>
-                    @elseif(auth()->user()->isDispatcher())
-                        <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wider">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                            Portal Dispatcher
-                        </span>
-                    @elseif(auth()->user()->isSuperAdmin() || auth()->user()->isTenantAdmin())
-                        <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 uppercase tracking-wider">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                            Portal Admin
-                        </span>
-                    @endif
-                @else
-                    <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        Portal Pelanggan
-                    </span>
-                @endauth
-
-                @if(isset($currentTenant))
-                    <div class="hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100/70 border border-slate-200/80 text-[11px] font-medium text-slate-600 max-w-[160px]" title="{{ $currentTenant->name }}">
-                        <i data-lucide="building-2" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                        <span class="truncate">{{ $currentTenant->name }}</span>
-                    </div>
-                @endif
             </div>
 
             <!-- Center: Role-Scoped Navigation Links -->
             <nav class="hidden md:flex items-center gap-1">
                 @guest
-                    <!-- TAMU / PELANGGAN: Hanya melihat Pelacakan Resi -->
+                    <!-- TAMU / PELANGGAN: Pelacakan Resi -->
                     <a href="{{ route('home') }}" 
                        class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors bg-slate-100 text-slate-900 font-semibold">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -105,45 +75,45 @@
 
                 @auth
                     @if(auth()->user()->isDriver())
-                        <!-- KURIR: Hanya melihat Driver Cockpit HP -->
+                        <!-- KURIR: Driver Cockpit & Cek Resi -->
                         <a href="{{ route('driver.index') }}" 
                            class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('driver.*') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            <span>Driver Cockpit (Tugas Saya)</span>
+                            <span>Cockpit</span>
                         </a>
                         <a href="{{ route('home') }}" 
-                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('home') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                            <span>Cek Resi</span>
+                            <span>Lacak</span>
                         </a>
                     @elseif(auth()->user()->isDispatcher())
-                        <!-- DISPATCHER: Hanya melihat Meja Kontrol Kantor -->
+                        <!-- DISPATCHER: Dispatch Center & Cek Resi -->
                         <a href="{{ route('dispatcher.index') }}" 
                            class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('dispatcher.*') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="map" class="w-3.5 h-3.5 text-blue-600"></i>
-                            <span>Dispatch Center (Radar &amp; Order)</span>
+                            <span>Dispatch</span>
                         </a>
                         <a href="{{ route('home') }}" 
-                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('home') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                            <span>Cek Resi</span>
+                            <span>Lacak</span>
                         </a>
                     @elseif(auth()->user()->isSuperAdmin() || auth()->user()->isTenantAdmin())
-                        <!-- ADMIN / OWNER: Melihat Dispatch & Panel Admin -->
+                        <!-- ADMIN / OWNER: Dispatch, Admin & Cek Resi -->
                         <a href="{{ route('dispatcher.index') }}" 
                            class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('dispatcher.*') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="map" class="w-3.5 h-3.5 text-slate-500"></i>
-                            <span>Dispatch Radar</span>
+                            <span>Dispatch</span>
                         </a>
                         <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" 
                            class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->is(config('app.admin_prefix', 'fleetpulse-ops-mgmt').'*') ? 'bg-amber-100/80 text-amber-900 font-semibold border border-amber-300' : 'text-amber-800 bg-amber-50/60 hover:bg-amber-100 hover:text-amber-900 border border-amber-200' }}">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i>
-                            <span>Operations Admin</span>
+                            <span>Admin</span>
                         </a>
                         <a href="{{ route('home') }}" 
-                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+                           class="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors {{ request()->routeIs('home') ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                            <span>Cek Resi</span>
+                            <span>Lacak</span>
                         </a>
                     @endif
                 @endauth
@@ -157,12 +127,12 @@
                         <button type="button" 
                                 id="userDropdownBtn"
                                 onclick="toggleUserDropdown(event)"
-                                class="h-8 pl-1 pr-2.5 rounded-full sm:rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-100 flex items-center gap-2 transition-colors text-slate-700 bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10">
+                                class="h-8 pl-1 pr-2 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 transition-colors text-slate-700 bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                             <span class="w-6 h-6 rounded-full bg-slate-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
                                 {{ substr(auth()->user()->name, 0, 1) }}
                             </span>
-                            <span class="text-xs font-medium text-slate-800 max-w-[110px] truncate hidden sm:inline">
-                                {{ auth()->user()->name }}
+                            <span class="text-xs font-medium text-slate-800 max-w-[90px] truncate hidden sm:inline">
+                                {{ explode(' ', auth()->user()->name)[0] }}
                             </span>
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" id="userDropdownChevron"></i>
                         </button>
@@ -244,13 +214,6 @@
 
         <!-- Mobile Collapsible Menu (Role Scoped) -->
         <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1">
-            @if(isset($currentTenant))
-                <div class="flex items-center gap-1.5 px-3 py-2 rounded-md bg-slate-50 text-xs font-medium text-slate-700 mb-2 border border-slate-200">
-                    <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
-                    <span>Tenant: {{ $currentTenant->name }}</span>
-                </div>
-            @endif
-
             @guest
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-xs font-medium bg-slate-100 text-slate-900 font-semibold">
                     Lacak Paket
@@ -260,27 +223,27 @@
             @auth
                 @if(auth()->user()->isDriver())
                     <a href="{{ route('driver.index') }}" class="block px-3 py-2 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200">
-                        Driver Cockpit (Tugas Saya)
+                        Cockpit
                     </a>
                     <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-600 hover:bg-slate-50">
-                        Cek Resi
+                        Lacak
                     </a>
                 @elseif(auth()->user()->isDispatcher())
                     <a href="{{ route('dispatcher.index') }}" class="block px-3 py-2 rounded-md text-xs font-medium bg-blue-50 text-blue-800 font-semibold border border-blue-200">
-                        Dispatch Center (Radar &amp; Order)
+                        Dispatch
                     </a>
                     <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-600 hover:bg-slate-50">
-                        Cek Resi
+                        Lacak
                     </a>
                 @elseif(auth()->user()->isSuperAdmin() || auth()->user()->isTenantAdmin())
                     <a href="{{ route('dispatcher.index') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-700 hover:bg-slate-50">
-                        Dispatch Radar
+                        Dispatch
                     </a>
                     <a href="/{{ config('app.admin_prefix', 'fleetpulse-ops-mgmt') }}/dashboard" class="block px-3 py-2 rounded-md text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200">
-                        Operations Admin
+                        Admin
                     </a>
                     <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-xs font-medium text-slate-600 hover:bg-slate-50">
-                        Cek Resi
+                        Lacak
                     </a>
                 @endif
 

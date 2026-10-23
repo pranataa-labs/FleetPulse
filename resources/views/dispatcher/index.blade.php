@@ -108,8 +108,9 @@
                                     <span class="text-slate-400 italic">Unassigned</span>
                                 @endif
                             </td>
-                            <td class="py-3 px-4 text-xs font-medium text-slate-800">
-                                {{ $o->distance_km }} km &bullet; Rp {{ number_format($o->total_fee, 0, ',', '.') }}
+                            <td class="py-3 px-4 text-xs">
+                                <div class="text-slate-500 font-medium whitespace-nowrap">{{ $o->distance_km }} km</div>
+                                <div class="font-semibold text-slate-900 whitespace-nowrap">Rp {{ number_format($o->total_fee, 0, ',', '.') }}</div>
                             </td>
                             <td class="py-3 px-4">
                                 <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
