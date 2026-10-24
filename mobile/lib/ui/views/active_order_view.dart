@@ -27,213 +27,327 @@ class ActiveOrderView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Order Header Card
+          // Sleek Unified Delivery Card
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.primaryBlue, width: 2),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppTheme.slate200.withOpacity(0.8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Top Header: Order Number & Status Pill
                 Row(
                   mainAxisAlignment: MainAxisAlignment.between,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'PESANAN AKTIF DITUGASKAN',
-                        style: TextStyle(
-                          color: AppTheme.primaryBlue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'NOMOR PESANAN',
+                          style: TextStyle(
+                            fontSize: 10,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.slate500,
+                          ),
                         ),
-                      ),
+                        Text(
+                          '#${order.orderNumber}',
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.slate900,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '#${order.orderNumber}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'monospace',
-                        fontSize: 13,
-                      ),
-                    ),
+                    _buildStatusPill(order.deliveryStatus),
                   ],
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ongkir: Rp ${order.totalFee.toStringAsFixed(0)}',
-                      style: const TextStyle(fontSize: 12, color: AppTheme.slate700),
-                    ),
-                    Text(
-                      'Status: ${order.deliveryStatus}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryBlue,
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 20),
+
+                // Connected Route Journey (Apple / Grab style)
+                _buildConnectedRoute(),
+                const SizedBox(height: 20),
+
+                // Summary Stats Strip
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: AppTheme.slate100)),
+                  ),
+                  child: Row(
+                    children: [
+                      _buildStatColumn('Ongkos Kirim', 'Rp ${order.totalFee.toStringAsFixed(0)}'),
+                      _buildVerticalDivider(),
+                      _buildStatColumn('Jarak Rute', '${order.distanceKm} km'),
+                      _buildVerticalDivider(),
+                      _buildStatColumn('Berat Paket', '${order.weightKg ?? 1.2} kg'),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Direct Contact Card: SENDER (Penjual)
-          _buildContactCard(
-            title: 'Pengirim (Toko/Penjual)',
-            name: order.senderName,
-            phone: order.senderPhone,
-            address: order.pickupAddress,
-            icon: Icons.storefront_outlined,
-            onWhatsApp: () => _launchUrl(order.senderWaLink),
-            onCall: () => _launchUrl('tel:${order.senderPhone}'),
-          ),
-          const SizedBox(height: 12),
-
-          // Direct Contact Card: RECIPIENT (Pembeli)
-          _buildContactCard(
-            title: 'Penerima (Pembeli/Customer)',
-            name: order.recipientName,
-            phone: order.recipientPhone,
-            address: order.dropoffAddress,
-            icon: Icons.person_pin_circle_outlined,
-            onWhatsApp: () => _launchUrl(order.recipientWaLink),
-            onCall: () => _launchUrl('tel:${order.recipientPhone}'),
-          ),
           const SizedBox(height: 16),
 
-          // Progressive Workflow Action Button
+          // Single Clean Prominent Action Button
           _buildProgressiveButton(context, vm),
         ],
       ),
     );
   }
 
-  Widget _buildContactCard({
-    required String title,
-    required String name,
-    required String phone,
-    required String address,
-    required IconData icon,
-    required VoidCallback onWhatsApp,
-    required VoidCallback onCall,
-  }) {
+  Widget _buildStatusPill(String status) {
+    Color bg = Colors.blue.shade50;
+    Color text = Colors.blue.shade700;
+    String label = 'Dalam Penjemputan';
+
+    if (status == 'PICKED_UP') {
+      bg = Colors.indigo.shade50;
+      text = Colors.indigo.shade700;
+      label = 'Paket Diambil';
+    } else if (status == 'IN_TRANSIT') {
+      bg = Colors.blue.shade50;
+      text = Colors.blue.shade700;
+      label = 'Dalam Perjalanan';
+    } else if (status == 'DELIVERED') {
+      bg = Colors.emerald.shade50;
+      text = Colors.emerald.shade700;
+      label = 'Terkirim';
+    }
+
     return Container(
-      padding: const EdgeInsets.all(14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.slate200),
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
       ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: text),
+      ),
+    );
+  }
+
+  Widget _buildConnectedRoute() {
+    return Stack(
+      children: [
+        // Connecting Line
+        Positioned(
+          left: 7,
+          top: 14,
+          bottom: 14,
+          child: Container(
+            width: 2,
+            color: AppTheme.slate200,
+          ),
+        ),
+        Column(
+          children: [
+            // Origin Point
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: AppTheme.successGreen,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'TITIK JEMPUT (PENJUAL)',
+                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppTheme.slate500, letterSpacing: 0.5),
+                      ),
+                      Text(
+                        order.senderName,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.slate900),
+                      ),
+                      Text(
+                        order.pickupAddress,
+                        style: const TextStyle(fontSize: 12, color: AppTheme.slate500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                // Circular 1-Tap Action Icons
+                Row(
+                  children: [
+                    _buildCircleIconButton(
+                      icon: Icons.chat_bubble_outline,
+                      color: AppTheme.successGreen,
+                      onTap: () => _launchUrl(order.senderWaLink),
+                    ),
+                    const SizedBox(width: 6),
+                    _buildCircleIconButton(
+                      icon: Icons.phone_outlined,
+                      color: AppTheme.slate700,
+                      onTap: () => _launchUrl('tel:${order.senderPhone}'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Destination Point
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: AppTheme.dangerRose,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'TUJUAN ANTAR (PEMBELI)',
+                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppTheme.slate500, letterSpacing: 0.5),
+                      ),
+                      Text(
+                        order.recipientName,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.slate900),
+                      ),
+                      Text(
+                        order.dropoffAddress,
+                        style: const TextStyle(fontSize: 12, color: AppTheme.slate500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                // Circular 1-Tap Action Icons
+                Row(
+                  children: [
+                    _buildCircleIconButton(
+                      icon: Icons.chat_bubble_outline,
+                      color: AppTheme.successGreen,
+                      onTap: () => _launchUrl(order.recipientWaLink),
+                    ),
+                    const SizedBox(width: 6),
+                    _buildCircleIconButton(
+                      icon: Icons.phone_outlined,
+                      color: AppTheme.slate700,
+                      onTap: () => _launchUrl('tel:${order.recipientPhone}'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCircleIconButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 16, color: color),
+      ),
+    );
+  }
+
+  Widget _buildStatColumn(String label, String value) {
+    return Expanded(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.between,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, size: 16, color: AppTheme.slate500),
-                  const SizedBox(width: 6),
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.slate700),
-                  ),
-                ],
-              ),
-              Text(
-                phone,
-                style: const TextStyle(fontSize: 11, fontFamily: 'monospace', color: AppTheme.slate500),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-          Text(address, style: const TextStyle(fontSize: 12, color: AppTheme.slate500)),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: onWhatsApp,
-                  icon: const Icon(Icons.chat_bubble_outline, size: 16),
-                  label: const Text('WhatsApp'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.successGreen,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              OutlinedButton.icon(
-                onPressed: onCall,
-                icon: const Icon(Icons.phone_outlined, size: 16),
-                label: const Text('Telp'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.slate700,
-                  side: const BorderSide(color: AppTheme.slate200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-              ),
-            ],
-          ),
+          Text(label, style: const TextStyle(fontSize: 10, color: AppTheme.slate500)),
+          const SizedBox(height: 2),
+          Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.slate900)),
         ],
       ),
     );
   }
 
+  Widget _buildVerticalDivider() {
+    return Container(
+      width: 1,
+      height: 24,
+      color: AppTheme.slate100,
+    );
+  }
+
   Widget _buildProgressiveButton(BuildContext context, DriverViewModel vm) {
     if (order.deliveryStatus == 'ACCEPTED') {
-      return ElevatedButton.icon(
+      return ElevatedButton(
         onPressed: () => vm.advanceActiveOrderStatus('PICKED_UP'),
-        icon: const Icon(Icons.inventory_2_outlined),
-        label: const Text('1. Konfirmasi Ambil Fisik Paket'),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.indigo.shade600,
+          backgroundColor: AppTheme.slate900,
           padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
+        child: const Text('Konfirmasi Ambil Fisik Paket', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
       );
     } else if (order.deliveryStatus == 'PICKED_UP') {
-      return ElevatedButton.icon(
+      return ElevatedButton(
         onPressed: () => vm.advanceActiveOrderStatus('IN_TRANSIT'),
-        icon: const Icon(Icons.navigation_outlined),
-        label: const Text('2. Mulai Jalan Antar ke Penerima'),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryBlue,
           padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
+        child: const Text('Mulai Perjalanan ke Penerima', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
       );
     } else if (order.deliveryStatus == 'IN_TRANSIT') {
-      return ElevatedButton.icon(
+      return ElevatedButton(
         onPressed: () => vm.advanceActiveOrderStatus('DELIVERED'),
-        icon: const Icon(Icons.check_circle_outline),
-        label: const Text('3. Selesai Antar (Serahkan Paket)'),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.successGreen,
           padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
+        child: const Text('Konfirmasi Paket Diterima', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
       );
     } else {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.emerald.shade50,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
-          'Pesanan telah selesai (${order.deliveryStatus}).',
+          'Pengiriman Selesai (${order.deliveryStatus})',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.emerald.shade800, fontWeight: FontWeight.bold),
         ),

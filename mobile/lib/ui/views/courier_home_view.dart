@@ -30,40 +30,59 @@ class _CourierHomeViewState extends State<CourierHomeView> {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppTheme.slate900,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.local_shipping, size: 18, color: Colors.white),
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: AppTheme.slate900,
+              child: const Text('BS', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('FleetPulse Courier', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                Text(vm.driverName, style: const TextStyle(fontSize: 11, color: AppTheme.slate500)),
+                Text(vm.driverName, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.slate900)),
+                const Text('Kurir Motor • B 3012 SFE', style: TextStyle(fontSize: 10, color: AppTheme.slate500)),
               ],
             ),
           ],
         ),
         actions: [
-          // Online Toggle Chip
+          // Sleek Minimalist Online Indicator Switch
           Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: FilterChip(
-              selected: vm.isOnline,
-              onSelected: (_) => vm.toggleOnline(),
-              label: Text(vm.isOnline ? 'ONLINE' : 'OFFLINE'),
-              labelStyle: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: vm.isOnline ? AppTheme.successGreen : AppTheme.slate500,
+            padding: const EdgeInsets.only(right: 16.0),
+            child: InkWell(
+              onTap: () => vm.toggleOnline(),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: vm.isOnline ? Colors.emerald.shade50 : AppTheme.slate100,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: vm.isOnline ? Colors.emerald.shade200 : AppTheme.slate200,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: vm.isOnline ? AppTheme.successGreen : AppTheme.slate500,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      vm.isOnline ? 'Online' : 'Offline',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: vm.isOnline ? Colors.emerald.shade800 : AppTheme.slate500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              backgroundColor: AppTheme.slate100,
-              selectedColor: Colors.emerald.shade50,
-              side: BorderSide(color: vm.isOnline ? Colors.emerald.shade200 : AppTheme.slate200),
             ),
           ),
         ],
@@ -77,28 +96,21 @@ class _CourierHomeViewState extends State<CourierHomeView> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-        destinations: [
+        destinations: const [
           NavigationDestination(
-            icon: Badge(
-              isLabelVisible: vm.activeOrder != null,
-              child: const Icon(Icons.two_wheeler_outlined),
-            ),
-            selectedIcon: const Icon(Icons.two_wheeler),
-            label: 'Tugas Aktif',
+            icon: Icon(Icons.two_wheeler_outlined),
+            selectedIcon: Icon(Icons.two_wheeler),
+            label: 'Tugas',
           ),
           NavigationDestination(
-            icon: Badge(
-              label: Text('${vm.availableOrders.length}'),
-              isLabelVisible: vm.availableOrders.isNotEmpty,
-              child: const Icon(Icons.inbox_outlined),
-            ),
-            selectedIcon: const Icon(Icons.inbox),
-            label: 'Pool Order',
+            icon: Icon(Icons.inbox_outlined),
+            selectedIcon: Icon(Icons.inbox),
+            label: 'Pool',
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.gps_fixed_outlined),
-            selectedIcon: Icon(Icons.gps_fixed),
-            label: 'GPS Radar',
+          NavigationDestination(
+            icon: Icon(Icons.radar_outlined),
+            selectedIcon: Icon(Icons.radar),
+            label: 'Radar',
           ),
         ],
       ),
@@ -107,7 +119,6 @@ class _CourierHomeViewState extends State<CourierHomeView> {
 
   Widget _buildTabBody(DriverViewModel vm) {
     if (_currentIndex == 0) {
-      // 1. Active Order Tab
       if (vm.activeOrder != null) {
         return ActiveOrderView(order: vm.activeOrder!);
       } else {
@@ -115,33 +126,31 @@ class _CourierHomeViewState extends State<CourierHomeView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.check_circle_outline, size: 54, color: Colors.slate.shade300),
+              Icon(Icons.check_circle_outline, size: 48, color: Colors.slate.shade300),
               const SizedBox(height: 12),
-              const Text('Tidak Ada Tugas Berjalan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const Text('Tidak Ada Tugas Berjalan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 4),
-              const Text('Silakan pilih pesanan dari menu Pool Order.', style: TextStyle(fontSize: 12, color: AppTheme.slate500)),
+              const Text('Silakan ambil pesanan di tab Pool.', style: TextStyle(fontSize: 11, color: AppTheme.slate500)),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
+              ElevatedButton(
                 onPressed: () => setState(() => _currentIndex = 1),
-                icon: const Icon(Icons.search, size: 16),
-                label: const Text('Buka Pool Order'),
+                child: const Text('Buka Pool Order'),
               ),
             ],
           ),
         );
       }
     } else if (_currentIndex == 1) {
-      // 2. Available Orders Pool
       if (vm.availableOrders.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.inventory_2_outlined, size: 48, color: Colors.slate.shade300),
+              Icon(Icons.inbox_outlined, size: 48, color: Colors.slate.shade300),
               const SizedBox(height: 12),
-              const Text('Belum Ada Pesanan Masuk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const Text('Belum Ada Pesanan Masuk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 4),
-              const Text('Tarik ke bawah untuk memuat ulang daftar.', style: TextStyle(fontSize: 12, color: AppTheme.slate500)),
+              const Text('Tarik ke bawah untuk memuat ulang.', style: TextStyle(fontSize: 11, color: AppTheme.slate500)),
             ],
           ),
         );
@@ -158,7 +167,7 @@ class _CourierHomeViewState extends State<CourierHomeView> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.slate200),
+              border: Border.all(color: AppTheme.slate200.withOpacity(0.8)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,14 +186,18 @@ class _CourierHomeViewState extends State<CourierHomeView> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text('Jemput: ${order.pickupAddress}', style: const TextStyle(fontSize: 12, color: AppTheme.slate700)),
-                Text('Tujuan: ${order.dropoffAddress}', style: const TextStyle(fontSize: 12, color: AppTheme.slate500)),
-                const SizedBox(height: 10),
+                Text(
+                  '${order.pickupAddress} → ${order.dropoffAddress}',
+                  style: const TextStyle(fontSize: 12, color: AppTheme.slate700),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () => vm.claimOrder(order.id),
-                    child: const Text('Klaim & Ambil Pengiriman Ini'),
+                    child: const Text('Ambil Tugas Pengiriman Ini'),
                   ),
                 ),
               ],
@@ -193,31 +206,28 @@ class _CourierHomeViewState extends State<CourierHomeView> {
         },
       );
     } else {
-      // 3. Telemetry & GPS Radar Tab
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.slate200),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppTheme.slate200.withOpacity(0.8)),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.sensors, size: 40, color: AppTheme.primaryBlue),
+                  const Icon(Icons.sensors, size: 36, color: AppTheme.slate900),
                   const SizedBox(height: 8),
-                  const Text('GPS Telemetry Streamer', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Telemetri GPS Lapangan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 4),
-                  const Text('Mengirim koordinat real-time ke WebSocket Reverb', style: TextStyle(fontSize: 11, color: AppTheme.slate500)),
+                  const Text('Pancaran koordinat otomatis ke Reverb', style: TextStyle(fontSize: 11, color: AppTheme.slate500)),
                   const SizedBox(height: 16),
-                  ElevatedButton.icon(
+                  ElevatedButton(
                     onPressed: () => vm.sendPing(-6.1753924, 106.8271528),
-                    icon: const Icon(Icons.my_location, size: 16),
-                    label: const Text('Simulasi Ping GPS (-6.175, 106.827)'),
+                    child: const Text('Simulasi Ping Lokasi Sekarang'),
                   ),
                 ],
               ),

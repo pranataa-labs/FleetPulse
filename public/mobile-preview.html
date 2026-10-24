@@ -2,272 +2,286 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>FleetPulse Mobile Simulator (Flutter Dart Preview)</title>
+  <title>FleetPulse Mobile — Ultra-Clean Preview</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 antialiased p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center font-sans">
+<body class="bg-slate-950 text-slate-100 antialiased p-4 sm:p-8 min-h-screen flex flex-col items-center justify-center font-sans">
 
-  <!-- Header Controls Outside Phone -->
-  <div class="max-w-md w-full mb-4 flex items-center justify-between text-xs">
+  <!-- Floating Mode Bar (Top Outside Handset) -->
+  <div class="max-w-sm w-full mb-5 flex items-center justify-between text-xs">
     <div class="flex items-center gap-2">
-      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span class="font-bold text-slate-200">Flutter Mobile Preview</span>
-      <span class="px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800 text-[11px]">Dart MVVM</span>
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-bold text-slate-200 tracking-tight">FleetPulse Mobile</span>
+      <span class="text-slate-400">&bull;</span>
+      <span class="text-slate-400">Flutter Preview</span>
     </div>
 
-    <!-- Mode Switcher -->
-    <div class="flex rounded-lg bg-slate-800 p-0.5 border border-slate-700">
-      <button onclick="setAppRole('courier')" id="btnRoleCourier" class="px-2.5 py-1 rounded-md font-semibold text-xs transition bg-slate-900 text-white shadow-xs">
+    <!-- Mode Pill Toggle -->
+    <div class="flex rounded-full bg-slate-900 p-1 border border-slate-800 shadow-inner">
+      <button onclick="setAppRole('courier')" id="btnRoleCourier" class="px-3 py-1 rounded-full font-semibold text-xs transition bg-white text-slate-950 shadow-xs">
         Kurir
       </button>
-      <button onclick="setAppRole('admin')" id="btnRoleAdmin" class="px-2.5 py-1 rounded-md font-semibold text-xs transition text-slate-400 hover:text-white">
+      <button onclick="setAppRole('admin')" id="btnRoleAdmin" class="px-3 py-1 rounded-full font-semibold text-xs transition text-slate-400 hover:text-white">
         Admin
       </button>
     </div>
   </div>
 
-  <!-- SMARTPHONE DEVICE FRAME (Authentic iPhone / Android Form Factor) -->
-  <div class="relative w-[380px] h-[780px] bg-slate-950 rounded-[44px] p-3 shadow-2xl border-4 border-slate-700 flex flex-col overflow-hidden ring-1 ring-white/10">
+  <!-- SMARTPHONE DEVICE FRAME (Sleek Modern Smartphone Chassis) -->
+  <div class="relative w-[380px] h-[780px] bg-black rounded-[48px] p-3 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] border-[3px] border-slate-800 flex flex-col overflow-hidden ring-1 ring-white/10">
 
-    <!-- Physical Hardware Notch / Dynamic Island -->
+    <!-- Dynamic Island / Top Camera -->
     <div class="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-black rounded-full z-50 flex items-center justify-between px-3">
       <div class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800"></div>
-      <div class="w-1.5 h-1.5 rounded-full bg-blue-900/60"></div>
+      <div class="w-1.5 h-1.5 rounded-full bg-blue-900/40"></div>
     </div>
 
-    <!-- Screen Canvas -->
-    <div class="w-full h-full bg-slate-50 text-slate-900 rounded-[34px] flex flex-col overflow-hidden relative border border-slate-200">
+    <!-- Inside Screen (Pure Clean White Canvas) -->
+    <div class="w-full h-full bg-slate-50 text-slate-900 rounded-[38px] flex flex-col overflow-hidden relative">
 
       <!-- Status Bar -->
-      <div class="h-10 pt-2 px-6 flex items-center justify-between text-xs font-semibold text-slate-800 shrink-0 select-none z-40 bg-white">
-        <span id="statusBarTime">07:25</span>
+      <div class="h-11 pt-2.5 px-6 flex items-center justify-between text-xs font-semibold text-slate-800 shrink-0 select-none z-40 bg-white">
+        <span id="statusBarTime">07:30</span>
         <div class="flex items-center gap-1.5 text-slate-700">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.86a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0"/></svg>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.86a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0"/></svg>
           <span class="text-[11px] font-bold">5G</span>
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="16" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
         </div>
       </div>
 
-      <!-- App Header / AppBar -->
-      <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0 shadow-2xs z-30">
-        <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-            FP
+      <!-- Clean Minimalist Header -->
+      <div class="bg-white px-5 py-3 flex items-center justify-between shrink-0 z-30">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+            BS
           </div>
           <div>
-            <h1 id="appHeaderTitle" class="text-xs font-bold text-slate-900 leading-tight">FleetPulse Kurir</h1>
-            <p id="appHeaderSubtitle" class="text-[11px] text-slate-500 leading-none">Budi Santoso &bull; Motor</p>
+            <h1 id="appHeaderTitle" class="text-xs font-bold text-slate-900 leading-tight">Budi Santoso</h1>
+            <p id="appHeaderSubtitle" class="text-[11px] text-slate-400">Kurir Motor &bull; B 3012 SFE</p>
           </div>
         </div>
 
-        <!-- Online Toggle Pill -->
-        <button onclick="toggleDutyState()" id="dutyPill" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-          <span id="dutyText">ONLINE</span>
+        <!-- Subtle Online Toggle Switch -->
+        <button onclick="toggleDutyState()" id="dutyPill" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span id="dutyText">Online</span>
         </button>
       </div>
 
-      <!-- Live Toast Alert -->
-      <div id="liveToast" class="hidden absolute top-24 left-4 right-4 z-50 p-2.5 rounded-xl bg-slate-900 text-white text-xs shadow-xl flex items-center gap-2 animate-bounce">
-        <svg class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span id="toastMsg" class="font-medium">Status berhasil diperbarui!</span>
+      <!-- Clean Floating Toast -->
+      <div id="liveToast" class="hidden absolute top-20 left-4 right-4 z-50 p-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white text-xs shadow-xl flex items-center gap-2.5 transition-all">
+        <svg class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="toastMsg" class="font-medium text-slate-200">Notifikasi</span>
       </div>
 
-      <!-- CONTENT VIEWPORT (Scrollable Screen Body) -->
-      <div id="screenViewport" class="flex-1 overflow-y-auto no-scrollbar p-3.5 space-y-3.5 bg-slate-50 pb-20">
+      <!-- MAIN CONTENT VIEWPORT (Scrollable) -->
+      <div id="screenViewport" class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 bg-slate-50 pb-24">
         
-        <!-- Screen: Active Order (Tugas Aktif) -->
-        <div id="viewActiveOrder" class="space-y-3">
-          <div class="bg-white rounded-2xl border-2 border-blue-500 p-3.5 shadow-xs space-y-2.5">
+        <!-- Screen: Active Order (Ultra-Clean Delivery Journey) -->
+        <div id="viewActiveOrder" class="space-y-4">
+          
+          <!-- Unified Sleek Delivery Card -->
+          <div class="bg-white rounded-3xl p-4 shadow-xs border border-slate-200/80 space-y-4">
+            
+            <!-- Top Status Row -->
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                PESANAN AKTIF DITUGASKAN
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Nomor Pesanan</span>
+                <div class="font-mono text-sm font-bold text-slate-900" id="activeOrderNumber">#FP-6JRNRMEW</div>
+              </div>
+              <span id="activeStatusPill" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                Dalam Penjemputan
               </span>
-              <span class="font-mono text-xs font-semibold text-slate-900" id="activeOrderNumber">#FP-6JRNRMEW</span>
             </div>
 
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-              <span class="text-slate-500">Ongkir: <strong class="text-slate-900">Rp 22.500</strong></span>
-              <span class="text-slate-500">Status: <strong class="text-blue-600 font-bold" id="activeStatusLabel">ACCEPTED</strong></span>
+            <!-- Connected Route Journey Line (Apple Maps / Grab Style) -->
+            <div class="relative pl-6 space-y-5 pt-1">
+              <!-- Vertical Connecting Track -->
+              <div class="absolute left-2 top-2 bottom-3 w-0.5 bg-slate-200"></div>
+
+              <!-- Point 1: Penjemputan (Toko) -->
+              <div class="relative">
+                <span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-xs flex items-center justify-center">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                </span>
+                <div class="flex items-start justify-between gap-2">
+                  <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Titik Jemput (Penjual)</span>
+                    <p class="text-xs font-bold text-slate-900 leading-tight">Toko Elektronik Mangga Dua</p>
+                    <p class="text-xs text-slate-500 leading-snug">Mall Mangga Dua Lt. 3 No. 45</p>
+                  </div>
+                  <!-- Quick WhatsApp & Call Action Icons -->
+                  <div class="flex items-center gap-1 shrink-0 pt-1">
+                    <button onclick="triggerWhatsApp('Penjual', '081299223344')" title="WhatsApp Penjual" class="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center justify-center transition border border-emerald-200">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </button>
+                    <button onclick="triggerCall('081299223344')" title="Telepon Penjual" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Point 2: Pengantaran (Pembeli) -->
+              <div class="relative">
+                <span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow-xs flex items-center justify-center">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                </span>
+                <div class="flex items-start justify-between gap-2">
+                  <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tujuan Antar (Pembeli)</span>
+                    <p class="text-xs font-bold text-slate-900 leading-tight">Bpk. Hendra Wijaya</p>
+                    <p class="text-xs text-slate-500 leading-snug">Jl. Senopati Raya No. 12, Jaksel</p>
+                  </div>
+                  <!-- Quick WhatsApp & Call Action Icons -->
+                  <div class="flex items-center gap-1 shrink-0 pt-1">
+                    <button onclick="triggerWhatsApp('Pembeli', '081388776655')" title="WhatsApp Pembeli" class="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center justify-center transition border border-emerald-200">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </button>
+                    <button onclick="triggerCall('081388776655')" title="Telepon Pembeli" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Bar Strip -->
+            <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-center text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Ongkos Kirim</span>
+                <span class="font-bold text-slate-900">Rp 22.500</span>
+              </div>
+              <div class="border-x border-slate-100">
+                <span class="text-[10px] text-slate-400 block">Jarak Rute</span>
+                <span class="font-bold text-slate-900">3.8 km</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">Berat Paket</span>
+                <span class="font-bold text-slate-900">1.2 kg</span>
+              </div>
             </div>
           </div>
 
-          <!-- Contact Card 1: Penjual -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-2xs space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-800 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                <span>Pengirim (Penjual)</span>
-              </span>
-              <span class="text-[11px] font-mono text-slate-400">0812-9922-3344</span>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-900">Toko Elektronik Mangga Dua</p>
-              <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">Mall Mangga Dua Lt. 3 No. 45, Jakarta Pusat</p>
-            </div>
-            <div class="flex gap-2 pt-1">
-              <button onclick="triggerWhatsApp('Penjual (Toko Elektronik)', '081299223344')" class="flex-1 py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1 shadow-xs transition">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <span>WhatsApp</span>
-              </button>
-              <button onclick="triggerCall('081299223344')" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1 transition">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <span>Telp</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Contact Card 2: Pembeli -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-2xs space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-800 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>Penerima (Pembeli)</span>
-              </span>
-              <span class="text-[11px] font-mono text-slate-400">0813-8877-6655</span>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-900">Bapak Hendra Wijaya</p>
-              <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">Jl. Senopati Raya No. 12, Kebayoran Baru, Jakarta Selatan</p>
-            </div>
-            <div class="flex gap-2 pt-1">
-              <button onclick="triggerWhatsApp('Pembeli (Bpk Hendra)', '081388776655')" class="flex-1 py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1 shadow-xs transition">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <span>WhatsApp</span>
-              </button>
-              <button onclick="triggerCall('081388776655')" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1 transition">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <span>Telp</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Progressive Workflow Action Button -->
-          <div class="pt-2">
-            <button id="btnProgressiveAction" onclick="advanceWorkflowStep()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              <span id="progressiveBtnText">1. Konfirmasi Ambil Fisik Paket</span>
+          <!-- Single Prominent Floating Action Button -->
+          <div class="pt-1">
+            <button id="btnProgressiveAction" onclick="advanceWorkflowStep()" class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99]">
+              <span id="progressiveBtnText">Konfirmasi Ambil Fisik Paket</span>
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <p id="progressiveHint" class="text-[11px] text-slate-400 text-center mt-1.5">Tekan saat fisik paket sudah diterima dari tangan penjual.</p>
+            <p id="progressiveHint" class="text-[11px] text-slate-400 text-center mt-2">Langkah 1 dari 3: Ambil barang dari tangan pengirim</p>
           </div>
         </div>
 
-        <!-- Screen: Pool Orders (Pesanan Tersedia) -->
+        <!-- Screen: Pool Orders (Clean List) -->
         <div id="viewPoolOrders" class="hidden space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Dispatched Pool (Siap Ambil)</h3>
-            <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-bold" id="poolBadge">2 Tersedia</span>
+          <div class="flex items-center justify-between pb-1">
+            <span class="text-xs font-bold text-slate-900">Pesanan Siap Diambil</span>
+            <span class="text-[11px] text-slate-500 font-medium" id="poolBadge">2 Tersedia</span>
           </div>
 
-          <!-- Pool Order Card 1 -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-2xs space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-slate-900">#FP-9812AXYZ</span>
-              <span class="text-xs font-bold text-emerald-600">Rp 28.000</span>
+          <!-- Pool Card 1 -->
+          <div class="bg-white rounded-2xl p-3.5 shadow-xs border border-slate-200/80 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-mono font-bold text-slate-900">#FP-9812AXYZ</span>
+              <span class="font-bold text-emerald-600">Rp 28.000</span>
             </div>
-            <div class="text-xs space-y-0.5 text-slate-600">
-              <p><span class="text-slate-400 font-medium">Jemput:</span> Toko Kue Kartika, Tebet</p>
-              <p><span class="text-slate-400 font-medium">Tujuan:</span> Apartemen Kemang Village, Jaksel</p>
-              <p class="text-[11px] text-slate-400 pt-1">Jarak: 5.2 km &bull; Kargo: 1.2 kg</p>
+            <div class="text-xs text-slate-600 space-y-1">
+              <p class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span> <span class="truncate">Toko Kue Kartika, Tebet</span></p>
+              <p class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span> <span class="truncate">Apartemen Kemang Village</span></p>
             </div>
-            <button onclick="claimPoolOrder('#FP-9812AXYZ', 28000)" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition">
-              Klaim &amp; Ambil Tugas Ini
-            </button>
+            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-400">
+              <span>5.2 km &bull; 1.2 kg</span>
+              <button onclick="claimPoolOrder('#FP-9812AXYZ')" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition">
+                Ambil
+              </button>
+            </div>
           </div>
 
-          <!-- Pool Order Card 2 -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-2xs space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-slate-900">#FP-3144BCDE</span>
-              <span class="text-xs font-bold text-emerald-600">Rp 19.500</span>
+          <!-- Pool Card 2 -->
+          <div class="bg-white rounded-2xl p-3.5 shadow-xs border border-slate-200/80 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-mono font-bold text-slate-900">#FP-3144BCDE</span>
+              <span class="font-bold text-emerald-600">Rp 19.500</span>
             </div>
-            <div class="text-xs space-y-0.5 text-slate-600">
-              <p><span class="text-slate-400 font-medium">Jemput:</span> Apotek Sehat Jaya, Sudirman</p>
-              <p><span class="text-slate-400 font-medium">Tujuan:</span> Wisma BNI 46 Lt. 18</p>
-              <p class="text-[11px] text-slate-400 pt-1">Jarak: 2.1 km &bull; Kargo: 0.5 kg</p>
+            <div class="text-xs text-slate-600 space-y-1">
+              <p class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span> <span class="truncate">Apotek Sehat Jaya, Sudirman</span></p>
+              <p class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span> <span class="truncate">Wisma BNI 46 Lt. 18</span></p>
             </div>
-            <button onclick="claimPoolOrder('#FP-3144BCDE', 19500)" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition">
-              Klaim &amp; Ambil Tugas Ini
-            </button>
+            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-400">
+              <span>2.1 km &bull; 0.5 kg</span>
+              <button onclick="claimPoolOrder('#FP-3144BCDE')" class="px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition">
+                Ambil
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Screen: GPS Radar Telemetry -->
+        <!-- Screen: GPS Radar Telemetry (Minimalist Clean) -->
         <div id="viewTelemetry" class="hidden space-y-3">
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs text-center space-y-2">
-            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-              <svg class="w-6 h-6 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+          <div class="bg-white rounded-3xl p-5 shadow-xs border border-slate-200/80 text-center space-y-3">
+            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center mx-auto">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
             </div>
-            <h3 class="font-bold text-sm text-slate-900">Sensor GPS HP Android</h3>
-            <p class="text-xs text-slate-500">Pancaran koordinat otomatis ke Laravel Reverb (port 8080)</p>
+            <div>
+              <h3 class="font-bold text-sm text-slate-900">Telemetri GPS Lapangan</h3>
+              <p class="text-xs text-slate-500">Pancaran koordinat otomatis ke WebSocket Reverb</p>
+            </div>
 
-            <div class="grid grid-cols-2 gap-2 text-left pt-2 text-xs">
-              <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                <span class="text-slate-400 text-[10px] block">Lintang (Lat):</span>
+            <div class="grid grid-cols-2 gap-2 text-left text-xs pt-1">
+              <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 text-[10px] block">Lintang (Lat)</span>
                 <span class="font-mono font-semibold text-slate-800" id="teleLat">-6.175392</span>
               </div>
-              <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                <span class="text-slate-400 text-[10px] block">Bujur (Lng):</span>
+              <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                <span class="text-slate-400 text-[10px] block">Bujur (Lng)</span>
                 <span class="font-mono font-semibold text-slate-800" id="teleLng">106.82715</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                <span class="text-slate-400 text-[10px] block">Kecepatan:</span>
-                <span class="font-mono font-semibold text-slate-800" id="teleSpeed">38 km/h</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
-                <span class="text-slate-400 text-[10px] block">Heading:</span>
-                <span class="font-mono font-semibold text-slate-800">142° SE</span>
               </div>
             </div>
 
-            <button onclick="simulateGpsPing()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs mt-2 transition">
-              Simulasikan Kirim Ping GPS Sekarang
+            <button onclick="simulateGpsPing()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition">
+              Simulasi Ping Lokasi Sekarang
             </button>
           </div>
         </div>
 
         <!-- Screen: Admin Radar Mode -->
         <div id="viewAdminRadar" class="hidden space-y-3">
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
+          <div class="bg-white rounded-3xl p-4 shadow-xs border border-slate-200/80 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Radar Armada Lapangan</h3>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">4 Kurir Aktif</span>
+              <h3 class="font-bold text-xs text-slate-900">Radar Armada Lapangan</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold">4 Aktif</span>
             </div>
 
-            <!-- Mini Visual Radar Map Canvas -->
-            <div class="relative h-44 rounded-xl bg-slate-900 overflow-hidden border border-slate-800 flex items-center justify-center">
-              <!-- Radar circles -->
-              <div class="absolute w-36 h-36 rounded-full border border-blue-500/20 animate-ping"></div>
-              <div class="absolute w-24 h-24 rounded-full border border-blue-500/30"></div>
-              <div class="absolute w-12 h-12 rounded-full border border-blue-500/40"></div>
+            <!-- Sleek Minimalist Map Canvas -->
+            <div class="relative h-44 rounded-2xl bg-slate-900 overflow-hidden flex items-center justify-center">
+              <div class="absolute w-28 h-28 rounded-full border border-blue-500/20 animate-ping"></div>
+              <div class="absolute w-20 h-20 rounded-full border border-blue-500/30"></div>
 
               <!-- Driver pins -->
-              <div class="absolute top-10 left-16 flex items-center gap-1 bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-md">
-                <span>🏍️ Budi (Anda)</span>
+              <div class="absolute top-10 left-12 flex items-center gap-1 bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-md">
+                <span>🏍️ Budi</span>
               </div>
-              <div class="absolute bottom-12 right-14 flex items-center gap-1 bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                <span>🏍️ Andi S.</span>
-              </div>
-              <div class="absolute top-16 right-10 flex items-center gap-1 bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                <span>🚗 Joko (Mobil)</span>
+              <div class="absolute bottom-12 right-12 flex items-center gap-1 bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-full text-[10px] font-medium">
+                <span>🏍️ Andi</span>
               </div>
             </div>
 
             <div class="grid grid-cols-3 gap-2 text-center text-xs">
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                <span class="text-[10px] text-slate-400 block">Kurir On-Duty</span>
+              <div class="bg-slate-50 p-2 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Kurir</span>
                 <span class="font-bold text-slate-900 text-sm">8</span>
               </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                <span class="text-[10px] text-slate-400 block">Aktif Antar</span>
+              <div class="bg-slate-50 p-2 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Antar</span>
                 <span class="font-bold text-blue-600 text-sm">14</span>
               </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                <span class="text-[10px] text-slate-400 block">Selesai Hari Ini</span>
+              <div class="bg-slate-50 p-2 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Selesai</span>
                 <span class="font-bold text-emerald-600 text-sm">42</span>
               </div>
             </div>
@@ -276,29 +290,28 @@
 
       </div>
 
-      <!-- BOTTOM NAVIGATION BAR (Flutter NavigationBar Replica) -->
-      <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 px-3 flex items-center justify-around text-xs select-none z-40">
-        <button onclick="switchTab('active')" id="tabActive" class="flex flex-col items-center gap-0.5 text-blue-600 font-bold transition">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          <span class="text-[10px]">Tugas Aktif</span>
+      <!-- ULTRA-CLEAN BOTTOM NAVIGATION BAR -->
+      <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-100 px-6 flex items-center justify-around text-xs select-none z-40">
+        <button onclick="switchTab('active')" id="tabActive" class="flex flex-col items-center gap-1 text-slate-900 font-bold transition">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <span class="text-[10px]">Tugas</span>
         </button>
 
-        <button onclick="switchTab('pool')" id="tabPool" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-800 transition relative">
-          <span class="absolute -top-1 right-2 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center font-bold" id="tabPoolCount">2</span>
+        <button onclick="switchTab('pool')" id="tabPool" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-800 transition relative">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-          <span class="text-[10px]">Pool Order</span>
+          <span class="text-[10px]">Pool</span>
         </button>
 
-        <button onclick="switchTab('telemetry')" id="tabTelemetry" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-800 transition">
+        <button onclick="switchTab('telemetry')" id="tabTelemetry" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-800 transition">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          <span class="text-[10px]">GPS Telemetri</span>
+          <span class="text-[10px]">Radar</span>
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- Interactive Simulator Logic (JS) -->
+  <!-- Interactive Logic -->
   <script>
     let currentRole = 'courier';
     let currentTab = 'active';
@@ -309,7 +322,7 @@
       const toast = document.getElementById('liveToast');
       document.getElementById('toastMsg').textContent = msg;
       toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 2500);
+      setTimeout(() => toast.classList.add('hidden'), 2200);
     }
 
     function setAppRole(role) {
@@ -320,19 +333,19 @@
       const subtitle = document.getElementById('appHeaderSubtitle');
 
       if (role === 'courier') {
-        btnC.className = 'px-2.5 py-1 rounded-md font-semibold text-xs transition bg-slate-900 text-white shadow-xs';
-        btnA.className = 'px-2.5 py-1 rounded-md font-semibold text-xs transition text-slate-400 hover:text-white';
-        title.textContent = 'FleetPulse Kurir';
-        subtitle.textContent = 'Budi Santoso • Motor';
+        btnC.className = 'px-3 py-1 rounded-full font-semibold text-xs transition bg-white text-slate-950 shadow-xs';
+        btnA.className = 'px-3 py-1 rounded-full font-semibold text-xs transition text-slate-400 hover:text-white';
+        title.textContent = 'Budi Santoso';
+        subtitle.textContent = 'Kurir Motor • B 3012 SFE';
         switchTab('active');
-        showToast('Beralih ke Aplikasi Kurir (Driver Cockpit)');
+        showToast('Mode Kurir Aktif');
       } else {
-        btnA.className = 'px-2.5 py-1 rounded-md font-semibold text-xs transition bg-slate-900 text-white shadow-xs';
-        btnC.className = 'px-2.5 py-1 rounded-md font-semibold text-xs transition text-slate-400 hover:text-white';
-        title.textContent = 'FleetPulse Admin';
-        subtitle.textContent = 'Supervisor Lapangan • Fleet Radar';
+        btnA.className = 'px-3 py-1 rounded-full font-semibold text-xs transition bg-white text-slate-950 shadow-xs';
+        btnC.className = 'px-3 py-1 rounded-full font-semibold text-xs transition text-slate-400 hover:text-white';
+        title.textContent = 'Admin Supervisor';
+        subtitle.textContent = 'Monitoring Armada Lapangan';
         switchTab('radar');
-        showToast('Beralih ke Aplikasi Admin (Radar Armada)');
+        showToast('Mode Admin Radar Aktif');
       }
     }
 
@@ -353,20 +366,19 @@
       vTele.classList.add('hidden');
       vRadar.classList.add('hidden');
 
-      // Reset tab colors
-      tActive.className = 'flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-800 transition';
-      tPool.className = 'flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-800 transition relative';
-      tTele.className = 'flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-800 transition';
+      tActive.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-800 transition';
+      tPool.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-800 transition relative';
+      tTele.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-800 transition';
 
       if (tab === 'active') {
         vActive.classList.remove('hidden');
-        tActive.className = 'flex flex-col items-center gap-0.5 text-blue-600 font-bold transition';
+        tActive.className = 'flex flex-col items-center gap-1 text-slate-900 font-bold transition';
       } else if (tab === 'pool') {
         vPool.classList.remove('hidden');
-        tPool.className = 'flex flex-col items-center gap-0.5 text-blue-600 font-bold transition relative';
+        tPool.className = 'flex flex-col items-center gap-1 text-slate-900 font-bold transition relative';
       } else if (tab === 'telemetry') {
         vTele.classList.remove('hidden');
-        tTele.className = 'flex flex-col items-center gap-0.5 text-blue-600 font-bold transition';
+        tTele.className = 'flex flex-col items-center gap-1 text-slate-900 font-bold transition';
       } else if (tab === 'radar') {
         vRadar.classList.remove('hidden');
       }
@@ -376,56 +388,54 @@
       const btn = document.getElementById('btnProgressiveAction');
       const btnText = document.getElementById('progressiveBtnText');
       const hint = document.getElementById('progressiveHint');
-      const label = document.getElementById('activeStatusLabel');
+      const pill = document.getElementById('activeStatusPill');
 
       if (currentWorkflowStep === 1) {
         currentWorkflowStep = 2;
-        label.textContent = 'PICKED_UP';
-        label.className = 'text-indigo-600 font-bold';
-        btn.className = 'w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition';
-        btnText.textContent = '2. Mulai Jalan Antar ke Alamat Penerima';
-        hint.textContent = 'Tekan saat Anda mulai berkendara menuju alamat tujuan.';
-        showToast('Paket terkonfirmasi PICKED_UP dari pengirim!');
+        pill.textContent = 'Paket Diambil';
+        pill.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200';
+        btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99]';
+        btnText.textContent = 'Mulai Perjalanan ke Penerima';
+        hint.textContent = 'Langkah 2 dari 3: Berkendara ke alamat tujuan';
+        showToast('Status: Paket telah diambil dari toko');
       } else if (currentWorkflowStep === 2) {
         currentWorkflowStep = 3;
-        label.textContent = 'IN_TRANSIT';
-        label.className = 'text-blue-600 font-bold';
-        btn.className = 'w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition';
-        btnText.textContent = '3. Selesai Antar (Serahkan ke Penerima)';
-        hint.textContent = 'Tekan saat paket telah sukses diserahkan ke tangan penerima.';
-        showToast('Kurir IN_TRANSIT meluncur ke alamat tujuan!');
+        pill.textContent = 'Dalam Perjalanan';
+        pill.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
+        btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99]';
+        btnText.textContent = 'Konfirmasi Paket Diterima';
+        hint.textContent = 'Langkah 3 dari 3: Serahkan paket ke penerima';
+        showToast('Status: Sedang diantar ke penerima');
       } else if (currentWorkflowStep === 3) {
         currentWorkflowStep = 4;
-        label.textContent = 'DELIVERED';
-        label.className = 'text-emerald-600 font-bold';
-        btn.className = 'w-full py-3 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed';
-        btnText.textContent = 'Pengiriman Sukses Selesai (DELIVERED)';
+        pill.textContent = 'Terkirim';
+        pill.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed';
+        btnText.textContent = 'Pengiriman Selesai';
         btn.disabled = true;
-        hint.textContent = 'Order telah selesai. Anda dapat mengambil order baru di Pool.';
-        showToast('Pesanan DELIVERED! Pengiriman berhasil diselesaikan.');
+        hint.textContent = 'Tugas selesai. Silakan ambil pesanan baru di Pool.';
+        showToast('Pengiriman Sukses (DELIVERED)!');
       }
     }
 
-    function claimPoolOrder(orderNumber, fee) {
+    function claimPoolOrder(orderNumber) {
       document.getElementById('activeOrderNumber').textContent = orderNumber;
       currentWorkflowStep = 1;
       const btn = document.getElementById('btnProgressiveAction');
       const btnText = document.getElementById('progressiveBtnText');
       const hint = document.getElementById('progressiveHint');
-      const label = document.getElementById('activeStatusLabel');
+      const pill = document.getElementById('activeStatusPill');
 
       btn.disabled = false;
-      label.textContent = 'ACCEPTED';
-      label.className = 'text-blue-600 font-bold';
-      btn.className = 'w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition';
-      btnText.textContent = '1. Konfirmasi Ambil Fisik Paket';
-      hint.textContent = 'Tekan saat fisik paket sudah diterima dari tangan penjual.';
+      pill.textContent = 'Dalam Penjemputan';
+      pill.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
+      btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99]';
+      btnText.textContent = 'Konfirmasi Ambil Fisik Paket';
+      hint.textContent = 'Langkah 1 dari 3: Ambil barang dari tangan pengirim';
 
       document.getElementById('poolBadge').textContent = '1 Tersedia';
-      document.getElementById('tabPoolCount').textContent = '1';
-
       switchTab('active');
-      showToast(`Berhasil klaim order ${orderNumber}! Pesanan dipindahkan ke Tugas Aktif.`);
+      showToast(`Order ${orderNumber} berhasil diambil!`);
     }
 
     function toggleDutyState() {
@@ -434,13 +444,13 @@
       const text = document.getElementById('dutyText');
 
       if (isDutyOnline) {
-        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition bg-emerald-50 text-emerald-700 border border-emerald-200';
-        text.textContent = 'ONLINE';
-        showToast('Status Kurir: ONLINE (Siap menerima order)');
+        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition bg-emerald-50 text-emerald-700 border border-emerald-200';
+        text.textContent = 'Online';
+        showToast('Status: Online (Siap terima order)');
       } else {
-        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition bg-slate-100 text-slate-500 border border-slate-300';
-        text.textContent = 'OFFLINE';
-        showToast('Status Kurir: OFFLINE');
+        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition bg-slate-100 text-slate-500 border border-slate-200';
+        text.textContent = 'Offline';
+        showToast('Status: Offline');
       }
     }
 
@@ -449,17 +459,15 @@
     }
 
     function triggerCall(phone) {
-      showToast(`Memulai panggilan telepon seluler ke ${phone}`);
+      showToast(`Panggilan suara ke ${phone}`);
     }
 
     function simulateGpsPing() {
       const lat = (-6.175 + (Math.random() - 0.5) * 0.01).toFixed(6);
       const lng = (106.827 + (Math.random() - 0.5) * 0.01).toFixed(6);
-      const speed = Math.floor(25 + Math.random() * 20);
       document.getElementById('teleLat').textContent = lat;
       document.getElementById('teleLng').textContent = lng;
-      document.getElementById('teleSpeed').textContent = `${speed} km/h`;
-      showToast(`GPS Ping terkirim: [${lat}, ${lng}] @ ${speed} km/h`);
+      showToast(`Ping GPS: [${lat}, ${lng}]`);
     }
   </script>
 </body>
