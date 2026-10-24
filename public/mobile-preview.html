@@ -7,6 +7,13 @@
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .animate-slide-up {
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 antialiased p-4 sm:p-8 min-h-screen flex flex-col items-center justify-center font-sans">
@@ -99,20 +106,25 @@
             </div>
 
             <!-- Connected Route Journey Line (Apple Maps / Grab Style) -->
-            <div class="relative pl-6 space-y-5 pt-1">
+            <div class="relative pl-6 space-y-6 pt-1">
               <!-- Vertical Connecting Track -->
-              <div class="absolute left-2 top-2 bottom-3 w-0.5 bg-slate-200"></div>
+              <div class="absolute left-2 top-2.5 bottom-3.5 w-0.5 bg-slate-200"></div>
 
-              <!-- Point 1: Penjemputan (Toko) -->
+              <!-- Point 1: Penjemputan (Toko) - Clickable Card with Comfortable Text Spacing -->
               <div class="relative">
-                <span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-xs flex items-center justify-center">
+                <span class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-xs flex items-center justify-center">
                   <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                 </span>
                 <div class="flex items-start justify-between gap-2">
-                  <div class="space-y-0.5">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Titik Jemput (Penjual)</span>
-                    <p class="text-xs font-bold text-slate-900 leading-tight">Toko Elektronik Mangga Dua</p>
-                    <p class="text-xs text-slate-500 leading-snug">Mall Mangga Dua Lt. 3 No. 45</p>
+                  <!-- Clickable Address Details Area -->
+                  <div onclick="openAddressDetail('penjual')" class="flex-1 cursor-pointer group hover:bg-slate-50/80 -m-1.5 p-1.5 rounded-xl transition active:scale-[0.99]" title="Klik untuk lihat detail informasi alamat">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-emerald-600 transition">Titik Jemput (Penjual)</span>
+                      <svg class="w-3 h-3 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                      <span class="text-[9px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/50 opacity-0 group-hover:opacity-100 transition">Detail</span>
+                    </div>
+                    <p class="text-[13px] font-bold text-slate-900 mt-1.5 mb-1 leading-snug group-hover:text-emerald-950 transition">Toko Elektronik Mangga Dua</p>
+                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-1">Mall Mangga Dua Lt. 3 No. 45 &bull; <span class="text-emerald-600 font-medium underline underline-offset-2">Buka detail</span></p>
                   </div>
                   <!-- Quick WhatsApp & Call Action Icons -->
                   <div class="flex items-center gap-1 shrink-0 pt-1">
@@ -126,16 +138,21 @@
                 </div>
               </div>
 
-              <!-- Point 2: Pengantaran (Pembeli) -->
+              <!-- Point 2: Pengantaran (Pembeli) - Clickable Card with Comfortable Text Spacing -->
               <div class="relative">
-                <span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow-xs flex items-center justify-center">
+                <span class="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow-xs flex items-center justify-center">
                   <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                 </span>
                 <div class="flex items-start justify-between gap-2">
-                  <div class="space-y-0.5">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tujuan Antar (Pembeli)</span>
-                    <p class="text-xs font-bold text-slate-900 leading-tight">Bpk. Hendra Wijaya</p>
-                    <p class="text-xs text-slate-500 leading-snug">Jl. Senopati Raya No. 12, Jaksel</p>
+                  <!-- Clickable Address Details Area -->
+                  <div onclick="openAddressDetail('pembeli')" class="flex-1 cursor-pointer group hover:bg-slate-50/80 -m-1.5 p-1.5 rounded-xl transition active:scale-[0.99]" title="Klik untuk lihat detail informasi alamat">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-rose-600 transition">Tujuan Antar (Pembeli)</span>
+                      <svg class="w-3 h-3 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                      <span class="text-[9px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200/50 opacity-0 group-hover:opacity-100 transition">Detail</span>
+                    </div>
+                    <p class="text-[13px] font-bold text-slate-900 mt-1.5 mb-1 leading-snug group-hover:text-rose-950 transition">Bpk. Hendra Wijaya</p>
+                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-1">Jl. Senopati Raya No. 12, Jaksel &bull; <span class="text-rose-600 font-medium underline underline-offset-2">Buka detail</span></p>
                   </div>
                   <!-- Quick WhatsApp & Call Action Icons -->
                   <div class="flex items-center gap-1 shrink-0 pt-1">
@@ -293,7 +310,7 @@
       <!-- ULTRA-CLEAN BOTTOM NAVIGATION BAR -->
       <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-100 px-6 flex items-center justify-around text-xs select-none z-40">
         <button onclick="switchTab('active')" id="tabActive" class="flex flex-col items-center gap-1 text-slate-900 font-bold transition">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           <span class="text-[10px]">Tugas</span>
         </button>
 
@@ -308,6 +325,83 @@
         </button>
       </div>
 
+      <!-- SLIDING BOTTOM SHEET MODAL: Detail Informasi Penjual & Pembeli -->
+      <div id="addressDetailModal" class="hidden absolute inset-0 z-50 flex flex-col justify-end bg-slate-950/60 backdrop-blur-[2px] transition-all">
+        <!-- Backdrop (click to dismiss) -->
+        <div onclick="closeAddressDetail()" class="flex-1 cursor-pointer"></div>
+
+        <!-- Sheet Modal Container -->
+        <div class="bg-white rounded-t-[32px] p-5 shadow-2xl border-t border-slate-200/80 max-h-[82%] overflow-y-auto no-scrollbar space-y-3.5 animate-slide-up">
+          
+          <!-- Handle Bar -->
+          <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto -mt-1 mb-1"></div>
+
+          <!-- Header -->
+          <div class="flex items-start justify-between">
+            <div class="space-y-1">
+              <span id="sheetBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span id="sheetBadgeDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="sheetBadgeText">Titik Jemput (Penjual)</span>
+              </span>
+              <h2 id="sheetName" class="text-sm font-bold text-slate-900 leading-snug">Toko Elektronik Mangga Dua</h2>
+              <p id="sheetSub" class="text-[11px] text-slate-500">PIC: Ibu Melisa &bull; Kasir Toko</p>
+            </div>
+            <button onclick="closeAddressDetail()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <!-- Full Address Section (No Truncation) -->
+          <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100 space-y-1">
+            <div class="flex items-center gap-1 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Alamat Lengkap Tujuan
+            </div>
+            <p id="sheetFullAddress" class="text-xs text-slate-800 leading-relaxed font-medium">
+              Mall Mangga Dua Lt. 3 Blok B No. 45-47, Jl. Mangga Dua Raya, RT.01/RW.12, Mangga Dua Selatan, Kec. Sawah Besar, Kota Jakarta Pusat, DKI Jakarta 10730
+            </p>
+          </div>
+
+          <!-- Landmark & Courier Delivery Notes -->
+          <div class="bg-amber-50/70 rounded-2xl p-3 border border-amber-200/60 space-y-1">
+            <div class="flex items-center gap-1 text-amber-700 text-[10px] font-bold uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Patokan Lokasi & Catatan Kurir
+            </div>
+            <p id="sheetNotes" class="text-xs text-amber-900 leading-relaxed">
+              Masuk lewat pintu lobi utama utara, naik eskalator ke lantai 3, posisi toko persis di sebelah toko kamera Sony. Tanyakan paket FleetPulse ke kasir depan.
+            </p>
+          </div>
+
+          <!-- Primary Direct Actions (WhatsApp & Phone) -->
+          <div class="space-y-2 pt-1">
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="actionSheetWa()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                WhatsApp
+              </button>
+              <button onclick="actionSheetCall()" class="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Telepon
+              </button>
+            </div>
+
+            <!-- Utility Actions (Copy & Maps) -->
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="actionCopyAddress()" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Salin Alamat
+              </button>
+              <button onclick="actionOpenMaps()" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                Buka di Maps
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -317,6 +411,84 @@
     let currentTab = 'active';
     let currentWorkflowStep = 1; // 1: ACCEPTED, 2: PICKED_UP, 3: IN_TRANSIT, 4: DELIVERED
     let isDutyOnline = true;
+
+    // Detailed address repository for Penjual & Pembeli
+    const addressDetails = {
+      penjual: {
+        badge: 'Titik Jemput (Penjual)',
+        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        dotClass: 'bg-emerald-500',
+        name: 'Toko Elektronik Mangga Dua',
+        sub: 'PIC: Ibu Melisa • Kasir Toko Utama',
+        phone: '081299223344',
+        address: 'Mall Mangga Dua Lt. 3 Blok B No. 45-47, Jl. Mangga Dua Raya, RT.01/RW.12, Mangga Dua Selatan, Kec. Sawah Besar, Kota Jakarta Pusat, DKI Jakarta 10730',
+        notes: 'Masuk lewat pintu lobi utama utara, naik eskalator ke lantai 3, posisi toko persis di sebelah toko kamera Sony. Tanyakan paket FleetPulse ke kasir depan.'
+      },
+      pembeli: {
+        badge: 'Tujuan Antar (Pembeli)',
+        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        dotClass: 'bg-rose-500',
+        name: 'Bpk. Hendra Wijaya',
+        sub: 'Penerima Langsung • Rumah Tinggal',
+        phone: '081388776655',
+        address: 'Jl. Senopati Raya No. 12, RT.05/RW.02, Kel. Selong, Kec. Kebayoran Baru, Kota Jakarta Selatan, DKI Jakarta 12110',
+        notes: 'Rumah pagar hitam minimalis samping salon kecantikan. Bel rumah ada di tiang gerbang sebelah kanan. Jika tidak ada orang di rumah, boleh titip ke pos satpam cluster.'
+      }
+    };
+
+    let activeDetailKey = 'penjual';
+
+    function openAddressDetail(type) {
+      activeDetailKey = type;
+      const data = addressDetails[type];
+      const modal = document.getElementById('addressDetailModal');
+      const badge = document.getElementById('sheetBadge');
+      const dot = document.getElementById('sheetBadgeDot');
+      const badgeText = document.getElementById('sheetBadgeText');
+
+      badge.className = `inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${data.badgeClass} border`;
+      dot.className = `w-1.5 h-1.5 rounded-full ${data.dotClass}`;
+      badgeText.textContent = data.badge;
+
+      document.getElementById('sheetName').textContent = data.name;
+      document.getElementById('sheetSub').textContent = data.sub;
+      document.getElementById('sheetFullAddress').textContent = data.address;
+      document.getElementById('sheetNotes').textContent = data.notes;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAddressDetail() {
+      document.getElementById('addressDetailModal').classList.add('hidden');
+    }
+
+    function actionSheetWa() {
+      const data = addressDetails[activeDetailKey];
+      triggerWhatsApp(data.name, data.phone);
+    }
+
+    function actionSheetCall() {
+      const data = addressDetails[activeDetailKey];
+      triggerCall(data.phone);
+    }
+
+    function actionCopyAddress() {
+      const data = addressDetails[activeDetailKey];
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(data.address).then(() => {
+          showToast('Alamat lengkap berhasil disalin ke clipboard!');
+        }).catch(() => {
+          showToast('Alamat lengkap disalin!');
+        });
+      } else {
+        showToast('Alamat lengkap disalin!');
+      }
+    }
+
+    function actionOpenMaps() {
+      const data = addressDetails[activeDetailKey];
+      showToast(`Membuka rute navigasi ke: ${data.name}`);
+    }
 
     function showToast(msg) {
       const toast = document.getElementById('liveToast');
