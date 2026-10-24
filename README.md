@@ -3,16 +3,32 @@
 [![Laravel Framework](https://img.shields.io/badge/Laravel-13.x-red.svg)](https://laravel.com)
 [![WebSockets](https://img.shields.io/badge/Laravel_Reverb-WebSockets-blue.svg)](https://laravel.com/docs/reverb)
 [![GIS Mapping](https://img.shields.io/badge/GIS-Leaflet.js_&_OpenStreetMap-green.svg)](https://leafletjs.com)
+[![Mobile APIs](https://img.shields.io/badge/Mobile_API-REST_v1_(Android)-blue.svg)](#mobile-android-api-suite-v1)
 [![Architecture Discipline](https://img.shields.io/badge/Discipline-Workflow_Master-purple.svg)](https://github.com/pranataa-labs/Workflow-Master)
-[![Test Suite](https://img.shields.io/badge/Tests-22_Passed_100%25-brightgreen.svg)](#comprehensive-three-phase-verification)
+[![Test Suite](https://img.shields.io/badge/Tests-31_Passed_100%25-brightgreen.svg)](#comprehensive-three-phase-verification)
 
 ---
 
 ## Executive Overview & Architectural Vision
 
-**FleetPulse** is a production-grade, multi-tenant Software-as-a-Service (SaaS) logistics and live fleet tracking platform engineered for commercial courier services, last-mile parcel distributors, freight haulers, and food delivery networks.
+**FleetPulse** is a production-grade, multi-tenant Software-as-a-Service (SaaS) logistics and live fleet tracking platform engineered for commercial courier services, last-mile parcel distributors, freight haulers, and delivery networks.
 
-Unlike traditional single-tenant applications, FleetPulse is architected with **strict single-database tenant scoping** (powered by Eloquent Global Scopes and subdomain/header resolvers), sub-second **real-time WebSocket GPS telemetry** via **Laravel Reverb**, spatial **Haversine GIS routing engines**, and **pessimistic database locking** to prevent race conditions during concurrent order claiming.
+Unlike traditional single-tenant applications, FleetPulse implements a **strict 3-tier architectural separation**:
+1. **Public Web Portal (`/` & `/track/{token}`):** Dedicated exclusively for customers (senders & recipients) to track parcels with zero internal menu clutter or login buttons.
+2. **Internal Office Operations Desk (`/dispatch` & `/{admin_prefix}/*`):** Secure operational portal for desktop dispatchers and platform administrators.
+3. **Dedicated Android Mobile Application Suite (`/api/v1/...`):** Complete REST API endpoints designed to power native smartphone applications for field couriers and mobile supervisors.
+
+---
+
+## Public Parcel Tracking Portal
+
+The public website root (`http://localhost:8000/`) is designed strictly as an **Official Parcel Tracking Portal** without exposed administrative links, internal menus, or public sign-in buttons:
+
+![FleetPulse Public Tracking Portal](docs/images/public_tracking_portal.png)
+
+- **Smart Resi / Token Lookup:** Senders and recipients can enter either their human-readable order number (e.g. `#FP-20261024-001`) or cryptographically secure UUIDv4 token.
+- **Direct Live Map Redirect:** The lookup engine validates the waybill and immediately routes customers to the interactive GPS tracking map (`/track/{token}`).
+- **1-Tap Direct Courier Contact:** When a delivery is active, customers can contact the assigned courier directly via 1-tap WhatsApp (`wa.me/...`) or direct telephone calls.
 
 ---
 
@@ -24,7 +40,7 @@ Unlike traditional single-tenant applications, FleetPulse is architected with **
 - **Multi-Level Resolver:** Seamlessly resolves tenant contexts through subdomains (`{slug}.fleetpulse.test`), custom domain headers (`X-Tenant-Slug`, `X-Tenant-ID`), or active user authentication state.
 
 ### 2. Real-Time WebSockets Telemetry (Laravel Reverb)
-- **Sub-Second GPS Broadcasting:** Mobile courier devices push geolocation packets (lat, lng, heading, speed) every 3 to 5 seconds to `/api/driver/location`.
+- **Sub-Second GPS Broadcasting:** Courier smartphones stream geolocation packets (`lat`, `lng`, `heading`, `speed`) to `/api/v1/driver/location`.
 - **Event Streaming:** Dispatches `DriverLocationUpdated` implementing `ShouldBroadcastNow` directly to Reverb WebSocket channels:
   - `order.{tracking_token}`: Real-time public tracking map for the end recipient.
   - `tenant.{tenant_id}.dispatch`: Dispatcher operational radar overview.
@@ -37,17 +53,22 @@ Unlike traditional single-tenant applications, FleetPulse is architected with **
   $$\text{Total Fee} = \text{Base Fare} + (\text{Distance (km)} \times \text{Rate/km}) + (\text{Cargo Weight (kg)} \times \text{Rate/kg}) \times \text{Surge Multiplier}$$
 
 ### 4. Pessimistic Concurrency Locking (`lockForUpdate`)
-- When multiple couriers attempt to claim an incoming dispatched shipment simultaneously, the dispatch controller executes a transactional pessimistic database lock:
+- When multiple couriers attempt to claim an incoming dispatched shipment simultaneously, the system executes a transactional pessimistic database lock:
   ```php
   DB::transaction(function () use ($orderId, $driverId) {
-      $order = Order::where('id', $orderId)->lockForUpdate()->firstOrFail();
+      $order = Order::withoutGlobalScope('tenant')
+          ->where('id', $orderId)
+          ->lockForUpdate()
+          ->firstOrFail();
+
       if ($order->delivery_status !== 'DISPATCHED') {
           return null; // Prevents race condition
       }
+
       $order->update(['driver_id' => $driverId, 'delivery_status' => 'ACCEPTED']);
   });
   ```
-- Subsequent concurrent claim attempts receive an immediate HTTP 409 Conflict error without duplicate order allocation.
+- Eliminates double-assignment risks on high-concurrency order dispatches.
 
 ### 5. Obfuscated Administrative Suite & Security Hardening
 - **Route Obfuscation:** The administration operations center is dynamically routed via `ADMIN_PREFIX` from `.env` (e.g. `/fleetpulse-ops-mgmt/dashboard`), rendering default `/admin` probe scanners useless.
@@ -59,6 +80,79 @@ Unlike traditional single-tenant applications, FleetPulse is architected with **
   - `LOG_CHANNEL=daily`
   - `LOG_DAILY_DAYS=14`
 - Daily log files are structured under `storage/logs/laravel-YYYY-MM-DD.log` with dedicated event streams for GPS pings, order assignments, and security audit warnings.
+
+---
+
+## Mobile Android API Suite (v1)
+
+To support native Android mobile applications for field couriers and mobile fleet supervisors, FleetPulse provides a dedicated REST API suite under `/api/v1/...`:
+
+```mermaid
+flowchart TD
+    subgraph Mobile Apps
+        CA["📱 Android Courier App\n(Field Delivery)"]
+        AA["📱 Android Admin App\n(Supervisor Radar)"]
+    end
+
+    subgraph FleetPulse API v1
+        AUTH["/api/v1/auth/login"]
+        DRV["/api/v1/driver/*\n(Orders, GPS, Status)"]
+        ADM["/api/v1/admin/*\n(Radar, Metrics, Fleets)"]
+    end
+
+    subgraph Core Engine
+        REVERB["Laravel Reverb\n(WebSockets)"]
+        DB[(Database & Locks)]
+    end
+
+    CA -->|Auth| AUTH
+    CA -->|Telemetry & Workflows| DRV
+    AA -->|Auth| AUTH
+    AA -->|Fleet Monitoring| ADM
+
+    DRV --> REVERB
+    DRV --> DB
+    ADM --> DB
+```
+
+### Endpoints Specification
+
+#### A. Mobile Authentication
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/api/v1/auth/login` | `POST` | Authenticate couriers or administrators; returns API token, profile, fleet details, and application target |
+
+#### B. Android Courier (Driver) Endpoints
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/api/v1/driver/orders/available` | `GET` | Retrieve dispatched shipment pool available for claiming |
+| `/api/v1/driver/orders/active` | `GET` | Fetch active assigned order with customer contacts & 1-tap WhatsApp deep links |
+| `/api/v1/driver/orders/{id}/claim` | `POST` | Claim an order using pessimistic row locking |
+| `/api/v1/driver/orders/{id}/status`| `POST` | Progressive status transition: `PICKED_UP` $\rightarrow$ `IN_TRANSIT` $\rightarrow$ `DELIVERED` |
+| `/api/v1/driver/location` | `POST` | Stream background smartphone GPS coordinates (`lat`, `lng`, `heading`, `speed`) |
+| `/api/v1/driver/toggle-duty` | `POST` | Toggle courier availability status (`is_online`, `is_on_duty`) |
+
+#### C. Android Admin / Supervisor Endpoints
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/api/v1/admin/dashboard` | `GET` | High-level fleet metrics: online couriers, active deliveries, and completed orders |
+| `/api/v1/admin/drivers` | `GET` | Real-time GPS coordinates of all active couriers for radar map rendering |
+| `/api/v1/admin/orders` | `GET` | Live feed of recent tenant shipments with status filtering |
+
+---
+
+## Recommended Mobile Smartphone Stack
+
+For building the mobile applications (Courier and Admin), **Flutter (Dart)** is the recommended industry standard framework:
+
+| Evaluation Criteria | Flutter (Dart) 🏆 | React Native | Native Android (Kotlin) |
+| :--- | :--- | :--- | :--- |
+| **Codebase Efficiency** | **Single Codebase** (Android, iOS & Tablet) | Single Codebase (JS/TS) | Separate Android & iOS Codebases |
+| **Background GPS Telemetry** | **High Reliability** (`flutter_background_geolocation`) | Moderate (Prone to OS battery kills) | Maximum Native Control |
+| **Map Performance** | **60/120 FPS Native Canvas** (Google Maps / Mapbox) | Good (Bridge overhead on high points) | Maximum Performance |
+| **Barcode / Waybill Scanner** | **High Precision** (`mobile_scanner`) | High (`react-native-vision-camera`) | High (ML Kit) |
+| **1-Tap WhatsApp / Telp** | **Instant** (`url_launcher`) | Instant (`Linking.openURL`) | Instant (Android Intent) |
+| **Development Speed** | **Fastest** (Hot Reload, Typed Models) | Fast | Slower (2 platforms) |
 
 ---
 
@@ -165,7 +259,7 @@ erDiagram
 
 ## Comprehensive Three-Phase Verification
 
-In adherence with **Workflow Master** engineering guidelines, the application implements a strict 3-phase automated verification test suite:
+In adherence with **Workflow Master** engineering guidelines, the application implements an automated verification test suite:
 
 ```bash
 php artisan test
@@ -176,10 +270,10 @@ php artisan test
 | Verification Phase | Test Suite Class | Tests | Assertions | Result |
 | :--- | :--- | :---: | :---: | :---: |
 | **Phase 1: Database Architecture** | `DatabaseArchitectureTest` | 4 | 19 | **PASSED** (100%) |
-| **Phase 2: Backend Logic & Security** | `BackendLogicAndSecurityTest` | 8 | 29 | **PASSED** (100%) |
-| **Phase 3: Frontend UI & Workflow** | `FrontendUiAndWorkflowTest` | 8 | 42 | **PASSED** (100%) |
+| **Phase 2: Backend Logic & Security** | `BackendLogicAndSecurityTest` | 13 | 48 | **PASSED** (100%) |
+| **Phase 3: Frontend & Mobile Workflows** | `FrontendUiAndWorkflowTest` | 12 | 83 | **PASSED** (100%) |
 | **Framework Baseline** | `ExampleTest` | 2 | 2 | **PASSED** (100%) |
-| **Total Test Coverage** | **All Automated Test Suites** | **22** | **92** | **100% PASS** |
+| **Total Test Coverage** | **All Automated Test Suites** | **31** | **152** | **100% PASS** |
 
 ---
 
@@ -244,10 +338,10 @@ php artisan test
 
 | Role | Email | Password | Primary Surface |
 | :--- | :--- | :--- | :--- |
-| **Platform Superadmin** | `superadmin@fleetpulse.io` | `password123` | `/{ADMIN_PREFIX}/dashboard` |
-| **SwiftExpress Admin** | `admin@swiftexpress.com` | `password123` | `/{ADMIN_PREFIX}/dashboard` |
-| **Fleet Dispatcher** | `dispatcher@swiftexpress.com` | `password123` | `/dispatch` |
-| **Courier Driver (Budi)** | `budi.driver@swiftexpress.com` | `password123` | `/driver` |
+| **Platform Superadmin** | `superadmin@fleetpulse.io` | `password123` | `/{ADMIN_PREFIX}/dashboard` / Mobile API |
+| **SwiftExpress Admin** | `admin@swiftexpress.com` | `password123` | `/{ADMIN_PREFIX}/dashboard` / Mobile API |
+| **Fleet Dispatcher** | `dispatcher@swiftexpress.com` | `password123` | `/dispatch` (Desktop Web) |
+| **Courier Driver (Budi)** | `budi.driver@swiftexpress.com` | `password123` | Android Mobile App via `/api/v1/driver/*` |
 | **MetroCargo Admin** | `admin@metrocargo.com` | `password123` | Multi-Tenant Scoped Isolation |
 
 ---
