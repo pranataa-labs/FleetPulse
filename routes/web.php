@@ -15,25 +15,24 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// 1. Landing & Portal Home
+// 1. Dedicated Public Parcel Tracking Portal (Halaman Khusus Pelacakan Pelanggan)
 Route::get('/', function () {
-    $activeOrders = \Illuminate\Support\Facades\Schema::hasTable('orders')
-        ? Order::withoutGlobalScope('tenant')->with('tenant')->latest()->take(6)->get()
-        : collect();
-    $tenants = \Illuminate\Support\Facades\Schema::hasTable('tenants')
-        ? Tenant::withCount(['fleets', 'drivers', 'orders'])->get()
-        : collect();
-    return view('welcome', compact('activeOrders', 'tenants'));
+    $sampleOrder = \Illuminate\Support\Facades\Schema::hasTable('orders')
+        ? Order::withoutGlobalScope('tenant')->latest()->first()
+        : null;
+    return view('welcome', compact('sampleOrder'));
 })->name('home');
 
-// 2. Authentication & Demo Role Switcher
+// 2. Public Tracking Lookup & Live Tracking Map
+Route::match(['get', 'post'], '/track/lookup', [PublicTrackingController::class, 'lookup'])->name('tracking.lookup');
+Route::get('/track/{token}', [PublicTrackingController::class, 'show'])->name('tracking.show');
+
+// 3. Internal Operations Authentication (Khusus Staf Internal Kantor / Admin)
+Route::get('/internal/login', [AuthController::class, 'showLogin'])->name('internal.login');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/demo-switch/{userId}', [AuthController::class, 'switchDemo'])->name('demo.switch');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// 3. Public Customer Live Tracking
-Route::get('/track/{token}', [PublicTrackingController::class, 'show'])->name('tracking.show');
 
 // 4. Dispatcher Operations Center (Khusus Tim Kantor / Dispatcher)
 Route::prefix('dispatch')->middleware(['auth', 'role.dispatcher'])->group(function () {

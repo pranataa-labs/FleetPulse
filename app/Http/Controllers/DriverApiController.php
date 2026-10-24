@@ -261,4 +261,99 @@ class DriverApiController extends Controller
             'order' => $order->fresh(['checkpoints']),
         ]);
     }
+
+    /**
+     * Get available dispatched orders pool for Android Driver App.
+     */
+    public function availableOrders(Request $request): JsonResponse
+    {
+        $driverId = $request->query('driver_id');
+        $driver = $driverId ? Driver::find($driverId) : null;
+
+        $query = Order::withoutGlobalScope('tenant')
+            ->where('delivery_status', 'DISPATCHED')
+            ->latest();
+
+        if ($driver) {
+            $query->where('tenant_id', $driver->tenant_id);
+        }
+
+        $orders = $query->take(20)->get()->map(function ($o) {
+            return [
+                'id' => $o->id,
+                'order_number' => $o->order_number,
+                'pickup_address' => $o->pickup_address,
+                'dropoff_address' => $o->dropoff_address,
+                'total_fee' => (float) $o->total_fee,
+                'distance_km' => (float) $o->distance_km,
+                'weight_kg' => (float) $o->weight_kg,
+                'vehicle_type' => $o->vehicle_type,
+                'created_at' => $o->created_at?->diffForHumans(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'orders' => $orders,
+        ]);
+    }
+
+    /**
+     * Get current active assigned order for Android Driver App.
+     */
+    public function activeOrder(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'driver_id' => 'required|exists:drivers,id',
+        ]);
+
+        $driver = Driver::findOrFail($validated['driver_id']);
+        $order = $driver->activeOrder();
+
+        if (! $order) {
+            return response()->json([
+                'success' => true,
+                'has_active_order' => false,
+                'order' => null,
+            ]);
+        }
+
+        $senderWa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', (string) $order->sender_phone));
+        $recipientWa = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', (string) $order->recipient_phone));
+
+        return response()->json([
+            'success' => true,
+            'has_active_order' => true,
+            'order' => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'tracking_token' => $order->tracking_token,
+                'delivery_status' => $order->delivery_status,
+                'total_fee' => (float) $order->total_fee,
+                'distance_km' => (float) $order->distance_km,
+                'pickup' => [
+                    'name' => $order->sender_name,
+                    'phone' => $order->sender_phone,
+                    'wa_link' => $senderWa ? "https://wa.me/{$senderWa}?text=" . urlencode("Halo {$order->sender_name}, saya kurir FleetPulse akan menjemput paket #{$order->order_number}") : null,
+                    'address' => $order->pickup_address,
+                    'lat' => (float) $order->pickup_lat,
+                    'lng' => (float) $order->pickup_lng,
+                ],
+                'dropoff' => [
+                    'name' => $order->recipient_name,
+                    'phone' => $order->recipient_phone,
+                    'wa_link' => $recipientWa ? "https://wa.me/{$recipientWa}?text=" . urlencode("Halo {$order->recipient_name}, saya kurir FleetPulse sedang mengantarkan paket #{$order->order_number}") : null,
+                    'address' => $order->dropoff_address,
+                    'lat' => (float) $order->dropoff_lat,
+                    'lng' => (float) $order->dropoff_lng,
+                ],
+                'next_step' => match ($order->delivery_status) {
+                    'ACCEPTED' => ['action' => 'PICKED_UP', 'label' => 'Konfirmasi Ambil Fisik Paket'],
+                    'PICKED_UP' => ['action' => 'IN_TRANSIT', 'label' => 'Mulai Jalan Antar ke Penerima'],
+                    'IN_TRANSIT' => ['action' => 'DELIVERED', 'label' => 'Selesai Antar (Serahkan ke Penerima)'],
+                    default => null,
+                },
+            ],
+        ]);
+    }
 }

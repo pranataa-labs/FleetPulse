@@ -1,7 +1,15 @@
 @extends('layouts.app', ['title' => "Live Tracking #{$order->order_number} — FleetPulse"])
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <div class="flex items-center justify-between">
+        <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 transition bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Lacak Paket Lainnya</span>
+        </a>
+        <span class="text-xs text-slate-400 font-mono">Kode Tracking: {{ $order->tracking_token }}</span>
+    </div>
+
     <!-- Header Details -->
     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

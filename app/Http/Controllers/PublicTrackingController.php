@@ -10,6 +10,31 @@ use Illuminate\View\View;
 class PublicTrackingController extends Controller
 {
     /**
+     * Search and redirect to live tracking interface by tracking token or order number.
+     */
+    public function lookup(Request $request)
+    {
+        $rawQuery = $request->input('tracking_number') ?? $request->input('query') ?? '';
+        $query = trim((string) $rawQuery);
+
+        if (empty($query)) {
+            return redirect()->route('home')->with('error', 'Silakan masukkan nomor resi atau kode tracking.');
+        }
+
+        $order = Order::withoutGlobalScope('tenant')
+            ->where('tracking_token', $query)
+            ->orWhere('order_number', $query)
+            ->orWhere('order_number', 'LIKE', "%{$query}%")
+            ->first();
+
+        if (! $order) {
+            return redirect()->route('home')->with('error', "Nomor resi '{$query}' tidak ditemukan dalam sistem. Mohon periksa kembali kode resi Anda.");
+        }
+
+        return redirect()->route('tracking.show', $order->tracking_token);
+    }
+
+    /**
      * Show live parcel tracking interface for customers.
      */
     public function show(string $token): View

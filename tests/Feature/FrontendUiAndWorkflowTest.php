@@ -98,15 +98,95 @@ class FrontendUiAndWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_landing_portal_loads_with_active_shipments(): void
+    public function test_landing_portal_loads_as_dedicated_public_tracking_portal_without_operational_menus(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertStatus(200)
             ->assertSee('FleetPulse')
+            ->assertSee('Portal Resmi Pelacakan Paket')
+            ->assertSee('Lacak Posisi &amp; Perjalanan Paket Anda', false)
             ->assertSee('FP-TEST-001')
-            ->assertSee('Enterprise Logistics Platform')
-            ->assertSee('SwiftExpress Courier');
+            ->assertDontSee('Sign In')
+            ->assertDontSee('Dispatch Center')
+            ->assertDontSee('Driver Cockpit');
+    }
+
+    public function test_public_tracking_lookup_redirects_to_live_tracking_view(): void
+    {
+        // 1. Lookup by order number
+        $response = $this->get(route('tracking.lookup', ['query' => $this->order->order_number]));
+        $response->assertRedirect(route('tracking.show', $this->order->tracking_token));
+
+        // 2. Lookup by UUID token
+        $responseToken = $this->get(route('tracking.lookup', ['query' => $this->order->tracking_token]));
+        $responseToken->assertRedirect(route('tracking.show', $this->order->tracking_token));
+
+        // 3. Lookup invalid number returns back to home with error
+        $responseInvalid = $this->get(route('tracking.lookup', ['query' => 'FP-UNKNOWN-999']));
+        $responseInvalid->assertRedirect(route('home'));
+        $responseInvalid->assertSessionHas('error');
+    }
+
+    public function test_android_mobile_auth_login_returns_profile_and_target(): void
+    {
+        // Driver mobile login
+        $responseDriver = $this->postJson(route('api.v1.auth.login'), [
+            'email' => $this->driverUser->email,
+            'password' => 'password123',
+        ]);
+
+        $responseDriver->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'client_target' => 'ANDROID_COURIER_APP',
+            ])
+            ->assertJsonStructure([
+                'token',
+                'user' => ['id', 'name', 'role', 'driver'],
+            ]);
+
+        // Admin mobile login
+        $responseAdmin = $this->postJson(route('api.v1.auth.login'), [
+            'email' => $this->adminUser->email,
+            'password' => 'password123',
+        ]);
+
+        $responseAdmin->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'client_target' => 'ANDROID_ADMIN_APP',
+            ]);
+    }
+
+    public function test_android_driver_mobile_api_endpoints(): void
+    {
+        // Get active order via mobile API
+        $responseActive = $this->getJson(route('api.v1.driver.orders.active', ['driver_id' => $this->driver->id]));
+        $responseActive->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'has_active_order' => true,
+            ]);
+
+        // Get available orders pool via mobile API
+        $responsePool = $this->getJson(route('api.v1.driver.orders.available', ['driver_id' => $this->driver->id]));
+        $responsePool->assertStatus(200)
+            ->assertJson(['success' => true]);
+    }
+
+    public function test_android_admin_mobile_api_endpoints(): void
+    {
+        $responseDash = $this->getJson(route('api.v1.admin.dashboard'));
+        $responseDash->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'metrics' => ['total_drivers', 'online_drivers', 'active_deliveries'],
+            ]);
+
+        $responseDrivers = $this->getJson(route('api.v1.admin.drivers'));
+        $responseDrivers->assertStatus(200)
+            ->assertJsonStructure(['success', 'drivers']);
     }
 
     public function test_public_customer_tracking_view_renders_live_map_and_timeline(): void
