@@ -118,10 +118,10 @@
                 <div class="flex items-start justify-between gap-2">
                   <!-- Clickable Address Details Area -->
                   <div onclick="openAddressDetail('penjual')" class="flex-1 cursor-pointer group hover:bg-slate-50/80 -m-1.5 p-1.5 rounded-xl transition active:scale-[0.99]" title="Klik untuk lihat detail informasi alamat">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-emerald-600 transition">Titik Jemput (Penjual)</span>
-                      <svg class="w-3 h-3 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                      <span class="text-[9px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/50 opacity-0 group-hover:opacity-100 transition">Detail</span>
+                    <div class="flex items-center gap-1 whitespace-nowrap">
+                      <span class="text-[10px] font-bold text-slate-400 uppercase group-hover:text-emerald-600 transition">Titik Jemput &bull; Penjual</span>
+                      <svg class="w-3 h-3 text-slate-400 group-hover:text-emerald-600 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                      <span class="text-[9px] font-semibold text-emerald-600 bg-emerald-50 px-1 rounded opacity-0 group-hover:opacity-100 transition">Detail</span>
                     </div>
                     <p class="text-[13px] font-bold text-slate-900 mt-1.5 mb-1 leading-snug group-hover:text-emerald-950 transition">Toko Elektronik Mangga Dua</p>
                     <p class="text-xs text-slate-500 leading-relaxed line-clamp-1">Mall Mangga Dua Lt. 3 No. 45 &bull; <span class="text-emerald-600 font-medium underline underline-offset-2">Buka detail</span></p>
@@ -146,10 +146,10 @@
                 <div class="flex items-start justify-between gap-2">
                   <!-- Clickable Address Details Area -->
                   <div onclick="openAddressDetail('pembeli')" class="flex-1 cursor-pointer group hover:bg-slate-50/80 -m-1.5 p-1.5 rounded-xl transition active:scale-[0.99]" title="Klik untuk lihat detail informasi alamat">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-rose-600 transition">Tujuan Antar (Pembeli)</span>
-                      <svg class="w-3 h-3 text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                      <span class="text-[9px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200/50 opacity-0 group-hover:opacity-100 transition">Detail</span>
+                    <div class="flex items-center gap-1 whitespace-nowrap">
+                      <span class="text-[10px] font-bold text-slate-400 uppercase group-hover:text-rose-600 transition">Tujuan Antar &bull; Pembeli</span>
+                      <svg class="w-3 h-3 text-slate-400 group-hover:text-rose-600 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                      <span class="text-[9px] font-semibold text-rose-600 bg-rose-50 px-1 rounded opacity-0 group-hover:opacity-100 transition">Detail</span>
                     </div>
                     <p class="text-[13px] font-bold text-slate-900 mt-1.5 mb-1 leading-snug group-hover:text-rose-950 transition">Bpk. Hendra Wijaya</p>
                     <p class="text-xs text-slate-500 leading-relaxed line-clamp-1">Jl. Senopati Raya No. 12, Jaksel &bull; <span class="text-rose-600 font-medium underline underline-offset-2">Buka detail</span></p>
@@ -310,7 +310,7 @@
       <!-- ULTRA-CLEAN BOTTOM NAVIGATION BAR -->
       <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-100 px-6 flex items-center justify-around text-xs select-none z-40">
         <button onclick="switchTab('active')" id="tabActive" class="flex flex-col items-center gap-1 text-slate-900 font-bold transition">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           <span class="text-[10px]">Tugas</span>
         </button>
 
@@ -331,7 +331,7 @@
         <div onclick="closeAddressDetail()" class="flex-1 cursor-pointer"></div>
 
         <!-- Sheet Modal Container -->
-        <div class="bg-white rounded-t-[32px] p-5 shadow-2xl border-t border-slate-200/80 max-h-[82%] overflow-y-auto no-scrollbar space-y-3.5 animate-slide-up">
+        <div class="bg-white rounded-t-[32px] p-4.5 pt-3 shadow-2xl border-t border-slate-200/80 max-h-[88%] overflow-y-auto no-scrollbar space-y-2.5 animate-slide-up">
           
           <!-- Handle Bar -->
           <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto -mt-1 mb-1"></div>
@@ -344,7 +344,7 @@
                 <span id="sheetBadgeText">Titik Jemput (Penjual)</span>
               </span>
               <h2 id="sheetName" class="text-sm font-bold text-slate-900 leading-snug">Toko Elektronik Mangga Dua</h2>
-              <p id="sheetSub" class="text-[11px] text-slate-500">PIC: Ibu Melisa &bull; Kasir Toko</p>
+              <p id="sheetSub" class="text-[11px] text-slate-500">PIC: Ibu Melisa &bull; Kasir Toko Utama</p>
             </div>
             <button onclick="closeAddressDetail()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition shrink-0">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -641,6 +641,15 @@
       document.getElementById('teleLng').textContent = lng;
       showToast(`Ping GPS: [${lat}, ${lng}]`);
     }
+
+    // Auto-open detail modal if URL parameter ?detail=penjual or ?detail=pembeli exists
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const detailParam = params.get('detail');
+      if (detailParam === 'penjual' || detailParam === 'pembeli') {
+        openAddressDetail(detailParam);
+      }
+    });
   </script>
 </body>
 </html>
